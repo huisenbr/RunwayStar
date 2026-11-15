@@ -1,0 +1,15 @@
+# Backup copies made while editing
+*.bak
+*.bak[0-9]*
+*.bak.*
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# Local tooling
+node_modules/
+.claude/

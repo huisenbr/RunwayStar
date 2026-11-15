@@ -1,0 +1,70 @@
+GIMP Palette
+Name: Runway Star
+Columns: 8
+#
+# ── SKIN TONES ──────────────────────────────────────
+253 219 180	Skin Light
+245 192 138	Skin Sand
+212 149 106	Skin Warm
+160  99  58	Skin Brown
+107  58  42	Skin Deep
+#
+# ── SKIN DETAILS ────────────────────────────────────
+240 140 140	Cheek Blush
+212 135 120	Nose Shadow
+#
+# ── HAIR ────────────────────────────────────────────
+ 26  26  26	Hair Black
+123  79  46	Hair Brown
+245 216 110	Hair Blonde
+192  57  43	Hair Red
+244 143 177	Hair Pink
+ 93 173 226	Hair Blue
+155  89 182	Hair Purple
+#
+# ── LIP / MOUTH ─────────────────────────────────────
+212  96 122	Lip Main
+160  48  80	Lip Dark
+212 140 160	Lip Shadow
+245 245 245	Teeth White
+244 143 177	Tongue Pink
+#
+# ── EYES ────────────────────────────────────────────
+ 26  26  26	Eye Outline
+ 93 173 226	Iris Blue
+ 26  42  92	Pupil Dark
+255 255 255	Eye Highlight
+241 196  21	Star Yellow
+#
+# ── CLOTHING COLORS ─────────────────────────────────
+231  76  60	Cloth Red
+ 52 152 219	Cloth Blue
+ 46 204 113	Cloth Green
+241 196  15	Cloth Yellow
+155  89 182	Cloth Purple
+255 105 180	Cloth Pink
+236 237 238	Cloth White
+ 44  62  80	Cloth Black
+ 91 122 153	Cloth Denim
+245 197  24	Cloth Gold
+123  79  46	Cloth Brown
+#
+# ── CLOTHING DETAILS ────────────────────────────────
+255 255 255	Detail White
+245 197  24	Detail Gold
+ 80  80  80	Detail Dark
+#
+# ── OUTLINES & SHADOWS ──────────────────────────────
+ 26  26  26	Outline Black
+ 44  44  44	Shadow Dark
+ 80  80  80	Shadow Mid
+160 160 160	Shadow Light
+255 255 255	Highlight White
+#
+# ── ACCESSORIES ─────────────────────────────────────
+ 44  62  80	Hat Black
+231  76  60	Crown Red Gem
+ 52 152 219	Crown Blue Gem
+245 197  24	Crown Gold
+233  30  99	Bow Pink
+194  24  91	Bow Dark

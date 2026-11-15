@@ -1,0 +1,651 @@
+/* ===== BASE ===== */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #fce4ec, #e1bee7, #bbdefb);
+  min-height: 100vh;
+  overflow-x: hidden;
+  color-scheme: light;
+  color: #1a1a1a;
+}
+
+.screen { display: none; min-height: 100vh; padding: 20px; }
+.screen.active { display: block; }
+
+/* ===== TITLES ===== */
+.game-title {
+  text-align: center;
+  font-size: 2.8rem;
+  color: #c2185b;
+  text-shadow: 2px 2px 0 #fff, 4px 4px 0 #f48fb1;
+  margin-bottom: 4px;
+}
+.subtitle {
+  text-align: center;
+  color: #7b1fa2;
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+}
+
+/* ===== DRESSING ROOM LAYOUT ===== */
+.dress-layout {
+  display: flex;
+  gap: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+  align-items: flex-start;
+}
+
+/* ===== PIXEL ART CANVAS ===== */
+.character-canvas {
+  width: 192px;
+  height: 256px;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  display: block;
+}
+
+.runway-canvas {
+  width: 192px;
+  height: 256px;
+}
+
+/* ===== CHARACTER FRAME ===== */
+.character-frame {
+  flex: 0 0 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: sticky;
+  top: 20px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 20px;
+  padding: 20px 10px 10px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  color: #1a1a1a;
+}
+
+.mirror-stand {
+  width: 6px;
+  height: 30px;
+  background: #bdbdbd;
+  border-radius: 3px;
+  margin-top: 4px;
+}
+
+/* ===== CHARACTER BASE ===== */
+.character {
+  position: relative;
+  width: 120px;
+  height: 220px;
+}
+
+.layer {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Body parts */
+.body-head {
+  position: absolute;
+  width: 54px; height: 60px;
+  border-radius: 50% 50% 45% 45%;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  background: #FDDBB4; /* default skin, overridden by JS */
+}
+.body-neck {
+  position: absolute;
+  width: 18px; height: 18px;
+  top: 55px; left: 50%;
+  transform: translateX(-50%);
+  background: #FDDBB4;
+}
+.body-torso {
+  position: absolute;
+  width: 62px; height: 70px;
+  border-radius: 10px 10px 6px 6px;
+  top: 68px; left: 50%;
+  transform: translateX(-50%);
+  background: #FDDBB4;
+}
+.body-leg {
+  position: absolute;
+  width: 22px; height: 80px;
+  border-radius: 6px 6px 10px 10px;
+  top: 132px;
+  background: #FDDBB4;
+}
+.body-leg.left  { left: 22px; }
+.body-leg.right { right: 22px; }
+
+.body-arm {
+  position: absolute;
+  width: 16px; height: 60px;
+  border-radius: 8px;
+  top: 72px;
+  background: #FDDBB4;
+}
+.body-arm.left  { left: 8px;  transform: rotate(8deg); }
+.body-arm.right { right: 8px; transform: rotate(-8deg); }
+
+/* ===== EYES ===== */
+.eye {
+  position: absolute;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  top: 26px;
+  background: #2c3e50;
+}
+.eye.left  { left: 34px; }
+.eye.right { left: 52px; }
+
+/* cat eyes */
+.eye.cat { border-radius: 50% 0; transform: rotate(-30deg); }
+/* star eyes */
+.eye.star {
+  clip-path: polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+  background: #f1c40f;
+  width: 12px; height: 12px;
+}
+/* sleepy eyes */
+.eye.sleepy {
+  height: 5px;
+  border-radius: 0 0 8px 8px;
+  border-top: 2px solid #2c3e50;
+  background: transparent;
+}
+
+/* ===== HAIR STYLES ===== */
+.hair-bun-main {
+  position: absolute;
+  width: 54px; height: 30px;
+  border-radius: 50% 50% 0 0;
+  top: -2px; left: 50%;
+  transform: translateX(-50%);
+}
+.hair-bun-knot {
+  position: absolute;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  top: -12px; left: 50%;
+  transform: translateX(-50%);
+}
+.hair-long-top {
+  position: absolute;
+  width: 60px; height: 35px;
+  border-radius: 50% 50% 0 0;
+  top: -4px; left: 50%;
+  transform: translateX(-50%);
+}
+.hair-long-left, .hair-long-right {
+  position: absolute;
+  width: 14px; height: 90px;
+  border-radius: 0 0 10px 10px;
+  top: 18px;
+}
+.hair-long-left  { left: 18px; }
+.hair-long-right { right: 18px; }
+
+.hair-curly-top {
+  position: absolute;
+  width: 66px; height: 40px;
+  border-radius: 50%;
+  top: -6px; left: 50%;
+  transform: translateX(-50%);
+}
+.hair-curly-side {
+  position: absolute;
+  width: 20px; height: 30px;
+  border-radius: 50%;
+  top: 18px;
+}
+.hair-curly-side.left  { left: 14px; }
+.hair-curly-side.right { right: 14px; }
+
+.hair-short-top {
+  position: absolute;
+  width: 58px; height: 28px;
+  border-radius: 50% 50% 0 0;
+  top: -2px; left: 50%;
+  transform: translateX(-50%);
+}
+.hair-short-side {
+  position: absolute;
+  width: 12px; height: 20px;
+  border-radius: 0 0 8px 8px;
+  top: 16px;
+}
+.hair-short-side.left  { left: 20px; }
+.hair-short-side.right { right: 20px; }
+
+/* ===== CLOTHING SHAPES ===== */
+/* Top */
+.cloth-top {
+  position: absolute;
+  width: 66px; height: 55px;
+  border-radius: 6px 6px 4px 4px;
+  top: 68px; left: 50%;
+  transform: translateX(-50%);
+}
+.cloth-sleeve {
+  position: absolute;
+  width: 14px; height: 40px;
+  border-radius: 6px;
+  top: 70px;
+}
+.cloth-sleeve.left  { left: 10px; }
+.cloth-sleeve.right { right: 10px; }
+
+/* Crop top shorter */
+.cloth-top.crop { height: 38px; }
+
+/* Jacket lapel */
+.cloth-lapel {
+  position: absolute;
+  width: 12px; height: 30px;
+  top: 72px; left: 50%;
+  transform: translateX(-50%) rotate(0deg);
+  border-radius: 4px;
+  background: rgba(0,0,0,0.15);
+}
+
+/* Bottom */
+.cloth-bottom {
+  position: absolute;
+  width: 66px; height: 70px;
+  border-radius: 4px 4px 8px 8px;
+  top: 122px; left: 50%;
+  transform: translateX(-50%);
+}
+/* Skirt flares */
+.cloth-bottom.skirt {
+  width: 80px;
+  border-radius: 4px 4px 40px 40px;
+  height: 65px;
+}
+/* Dress covers more */
+.cloth-bottom.dress {
+  width: 80px; height: 100px;
+  top: 88px;
+  border-radius: 4px 4px 50px 50px;
+}
+/* Shorts shorter */
+.cloth-bottom.shorts { height: 40px; }
+
+/* Shoes */
+.cloth-shoe {
+  position: absolute;
+  width: 24px; height: 16px;
+  border-radius: 4px 4px 6px 6px;
+  bottom: 0;
+}
+.cloth-shoe.left  { left: 18px; }
+.cloth-shoe.right { right: 18px; }
+
+/* Heels */
+.cloth-shoe.heels { border-radius: 4px 10px 2px 2px; }
+/* Boots taller */
+.cloth-shoe.boots { height: 28px; border-radius: 4px 4px 4px 4px; }
+
+/* Accessories */
+.acc-hat {
+  position: absolute;
+  width: 64px; height: 24px;
+  border-radius: 4px 4px 0 0;
+  top: -14px; left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+}
+.acc-hat-brim {
+  position: absolute;
+  width: 76px; height: 10px;
+  border-radius: 4px;
+  top: -2px; left: 50%;
+  transform: translateX(-50%);
+  background: #222;
+}
+.acc-bow {
+  position: absolute;
+  width: 24px; height: 14px;
+  top: -6px; right: 14px;
+  background: #e91e63;
+  border-radius: 50% 0 50% 0;
+  transform: rotate(-20deg);
+}
+.acc-bow::after {
+  content: '';
+  position: absolute;
+  width: 14px; height: 24px;
+  background: #e91e63;
+  border-radius: 0 50% 0 50%;
+  top: -5px; left: 5px;
+  transform: rotate(20deg);
+}
+.acc-bag {
+  position: absolute;
+  width: 22px; height: 20px;
+  border-radius: 4px;
+  top: 100px; left: 2px;
+  background: #e91e63;
+  border: 2px solid #c2185b;
+}
+.acc-bag-strap {
+  position: absolute;
+  width: 2px; height: 30px;
+  background: #c2185b;
+  top: 72px; left: 12px;
+  border-radius: 2px;
+}
+.acc-sunglasses {
+  position: absolute;
+  width: 50px; height: 12px;
+  top: 22px; left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+}
+.acc-lens {
+  width: 16px; height: 12px;
+  border-radius: 4px;
+  background: rgba(0,0,0,0.7);
+}
+.acc-bridge {
+  width: 8px; height: 2px;
+  background: #555;
+}
+.acc-crown {
+  position: absolute;
+  width: 46px; height: 20px;
+  top: -16px; left: 50%;
+  transform: translateX(-50%);
+  background: #F5C518;
+  clip-path: polygon(0% 100%, 0% 40%, 20% 0%, 40% 60%, 50% 0%, 60% 60%, 80% 0%, 100% 40%, 100% 100%);
+}
+
+/* ===== OPTIONS PANEL ===== */
+.options-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.option-group {
+  background: rgba(255,255,255,0.9);
+  border-radius: 14px;
+  padding: 12px 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  color: #1a1a1a;
+}
+.option-group h3 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #7b1fa2;
+  margin-bottom: 8px;
+}
+
+.swatch-row, .item-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.swatch {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+.swatch:hover { transform: scale(1.15); }
+.swatch.selected { box-shadow: 0 0 0 3px #c2185b, 0 0 0 5px white; transform: scale(1.1); }
+
+.item-btn {
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: #f3e5f5;
+  color: #4a0072;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.item-btn:hover { background: #e1bee7; }
+.item-btn.selected {
+  background: #c2185b;
+  color: white;
+  border-color: #880e4f;
+}
+
+/* ===== RUNWAY BUTTON ===== */
+.btn-runway {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  background: linear-gradient(135deg, #e91e63, #9c27b0);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(233,30,99,0.4);
+  transition: transform 0.15s, box-shadow 0.15s;
+  margin-top: 8px;
+}
+.btn-runway:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(233,30,99,0.5);
+}
+.btn-runway:active { transform: translateY(0); }
+
+.hint { color: #c62828; font-size: 0.85rem; text-align: center; min-height: 18px; }
+
+/* ===== RUNWAY SCREEN ===== */
+#screen-runway {
+  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+}
+#screen-runway.active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.runway-title {
+  color: #fff;
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 20px;
+  text-shadow: 0 0 20px #f48fb1;
+}
+
+.runway-stage {
+  position: relative;
+  width: 700px;
+  max-width: 95vw;
+  height: 460px;
+  overflow: hidden;
+}
+
+.runway-floor {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 120px;
+  background: linear-gradient(180deg, #c2185b 0%, #880e4f 100%);
+  border-top: 4px solid #f48fb1;
+  border-radius: 4px 4px 0 0;
+}
+
+.runway-lights {
+  position: absolute;
+  top: 10px; left: 0; right: 0;
+  display: flex;
+  justify-content: space-around;
+  padding: 0 40px;
+}
+.light {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: #fff9c4;
+  box-shadow: 0 0 12px 4px #fff176, 0 0 30px 8px rgba(255,235,59,0.5);
+  animation: flicker 1.5s infinite alternate;
+}
+.light:nth-child(even) { animation-delay: 0.4s; }
+.light:nth-child(3n)   { animation-delay: 0.8s; }
+
+@keyframes flicker {
+  from { opacity: 0.8; }
+  to   { opacity: 1; box-shadow: 0 0 16px 6px #fff176, 0 0 40px 10px rgba(255,235,59,0.6); }
+}
+
+.runway-character-wrap {
+  position: absolute;
+  bottom: 110px;
+  left: -200px;
+}
+
+.runway-canvas { transform-origin: bottom center; }
+
+@keyframes walkRunway {
+  0%   { left: -200px; }
+  45%  { left: calc(50% - 96px); }
+  55%  { left: calc(50% - 96px); }
+  100% { left: calc(100% + 20px); }
+}
+
+.runway-character-wrap.walking {
+  animation: walkRunway 4s ease-in-out forwards;
+}
+
+/* walk bob */
+@keyframes walkBob {
+  0%, 100% { transform: translateY(0); }
+  25%       { transform: translateY(-6px); }
+  75%       { transform: translateY(-6px); }
+}
+.runway-canvas.walking {
+  animation: walkBob 0.5s infinite;
+}
+
+.audience {
+  position: absolute;
+  bottom: 4px; left: 0; right: 0;
+  display: flex;
+  justify-content: space-around;
+  font-size: 1.6rem;
+  animation: clap 0.8s infinite;
+}
+@keyframes clap {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.15); }
+}
+
+/* ===== JUDGES SCREEN ===== */
+#screen-judges {
+  background: linear-gradient(135deg, #fce4ec, #e1bee7);
+  padding: 30px 20px;
+}
+#screen-judges.active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.judges-title {
+  font-size: 2rem;
+  color: #880e4f;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.judges-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.judge-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 24px 20px;
+  width: 200px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+  color: #1a1a1a;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.5s, transform 0.5s;
+}
+.judge-card.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.judge-avatar { font-size: 3rem; margin-bottom: 8px; }
+.judge-name   { font-weight: bold; color: #6a1b9a; margin-bottom: 10px; }
+.judge-quote  { font-size: 0.82rem; color: #444444; font-style: italic; min-height: 50px; margin-bottom: 12px; line-height: 1.4; }
+.judge-score  {
+  font-size: 2.2rem;
+  font-weight: bold;
+  color: #c2185b;
+}
+
+/* Total score */
+.total-score-wrap {
+  text-align: center;
+  animation: popIn 0.5s ease;
+}
+@keyframes popIn {
+  0%   { transform: scale(0.5); opacity: 0; }
+  70%  { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.total-label { font-size: 1.1rem; color: #333333; }
+.total-score { font-size: 4rem; font-weight: bold; color: #880e4f; }
+.total-msg   { font-size: 1.2rem; color: #6a1b9a; margin: 8px 0 20px; }
+
+/* Keyboard focus */
+.item-btn:focus-visible, .swatch:focus-visible {
+  outline: 3px solid #e91e63;
+  outline-offset: 2px;
+}
+
+.judge-note {
+  margin-top: 8px;
+  font-size: 0.85em;
+  font-style: normal;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+/* Round theme */
+.theme-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: 560px;
+  margin: 0 auto 18px;
+  padding: 12px 18px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 2px dashed #e91e63;
+  border-radius: 16px;
+  text-align: left;
+}
+.theme-emoji { font-size: 2.4rem; line-height: 1; }
+.theme-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #888; }
+.theme-name  { font-size: 1.3rem; font-weight: 700; color: #c2185b; }
+.theme-blurb { font-size: 0.9rem; color: #555; }
+.runway-theme { text-align: center; font-weight: 700; color: #f8bbd0; margin: -6px 0 10px; }
+.theme-result { margin: 8px auto 14px; max-width: 460px; font-size: 0.95rem; line-height: 1.4; }

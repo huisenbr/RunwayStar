@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Runway Star!</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===== SCREEN 1: DRESSING ROOM ===== -->
+  <div id="screen-dress" class="screen active">
+    <h1 class="game-title">✨ Runway Star! ✨</h1>
+    <p class="subtitle">Design your look, then walk the runway!</p>
+
+    <div class="theme-banner" id="theme-banner">
+      <div class="theme-emoji" id="theme-emoji"></div>
+      <div class="theme-text">
+        <div class="theme-label">Tonight's theme</div>
+        <div class="theme-name" id="theme-name"></div>
+        <div class="theme-blurb" id="theme-blurb"></div>
+      </div>
+    </div>
+
+    <div class="dress-layout">
+
+      <!-- Character Preview -->
+      <div class="character-frame">
+        <canvas id="character" width="48" height="64" class="character-canvas"></canvas>
+        <div class="mirror-stand"></div>
+      </div>
+
+      <!-- Options Panel -->
+      <div class="options-panel">
+
+        <!-- Skin Tone -->
+        <div class="option-group">
+          <h3>Skin Tone</h3>
+          <div class="swatch-row" id="opts-skin">
+            <div class="swatch" data-slot="skin" data-value="tone1" style="background:#FDDBB4;" title="Light"></div>
+            <div class="swatch" data-slot="skin" data-value="tone2" style="background:#F5C08A;" title="Sand"></div>
+            <div class="swatch" data-slot="skin" data-value="tone3" style="background:#D4956A;" title="Warm"></div>
+            <div class="swatch" data-slot="skin" data-value="tone4" style="background:#A0633A;" title="Brown"></div>
+            <div class="swatch" data-slot="skin" data-value="tone5" style="background:#6B3A2A;" title="Deep"></div>
+          </div>
+        </div>
+
+        <!-- Eyes -->
+        <div class="option-group">
+          <h3>Eyes</h3>
+          <div class="item-row" id="opts-eyes">
+            <div class="item-btn" data-slot="eyes" data-value="round">👁️ Round</div>
+            <div class="item-btn" data-slot="eyes" data-value="cat">😸 Cat</div>
+            <div class="item-btn" data-slot="eyes" data-value="star">⭐ Star</div>
+            <div class="item-btn" data-slot="eyes" data-value="sleepy">😴 Dreamy</div>
+          </div>
+        </div>
+
+        <!-- Mouth -->
+        <div class="option-group">
+          <h3>Mouth</h3>
+          <div class="item-row" id="opts-mouth">
+            <div class="item-btn" data-slot="mouth" data-value="smile">😊 Smile</div>
+            <div class="item-btn" data-slot="mouth" data-value="grin">😁 Grin</div>
+            <div class="item-btn" data-slot="mouth" data-value="pout">😗 Pout</div>
+            <div class="item-btn" data-slot="mouth" data-value="tongue">😛 Tongue</div>
+          </div>
+        </div>
+
+        <!-- Hair -->
+        <div class="option-group">
+          <h3>Hair</h3>
+          <div class="item-row" id="opts-hair">
+            <div class="item-btn" data-slot="hair" data-value="bun">🍩 Bun</div>
+            <div class="item-btn" data-slot="hair" data-value="long">🌊 Long</div>
+            <div class="item-btn" data-slot="hair" data-value="curly">🌀 Curly</div>
+            <div class="item-btn" data-slot="hair" data-value="short">✂️ Short</div>
+          </div>
+          <div class="item-row" id="opts-haircolor">
+            <div class="swatch" data-slot="haircolor" data-value="black"   style="background:#1a1a1a;" title="Black"></div>
+            <div class="swatch" data-slot="haircolor" data-value="brown"   style="background:#7B4F2E;" title="Brown"></div>
+            <div class="swatch" data-slot="haircolor" data-value="blonde"  style="background:#F5D86E;" title="Blonde"></div>
+            <div class="swatch" data-slot="haircolor" data-value="red"     style="background:#C0392B;" title="Red"></div>
+            <div class="swatch" data-slot="haircolor" data-value="pink"    style="background:#F48FB1;" title="Pink"></div>
+            <div class="swatch" data-slot="haircolor" data-value="blue"    style="background:#5DADE2;" title="Blue"></div>
+            <div class="swatch" data-slot="haircolor" data-value="purple"  style="background:#9B59B6;" title="Purple"></div>
+          </div>
+        </div>
+
+        <!-- Top -->
+        <div class="option-group">
+          <h3>Top</h3>
+          <div class="item-row" id="opts-top">
+            <div class="item-btn" data-slot="top" data-value="tshirt">👕 T-Shirt</div>
+            <div class="item-btn" data-slot="top" data-value="blouse">🌸 Blouse</div>
+            <div class="item-btn" data-slot="top" data-value="jacket">🧥 Jacket</div>
+            <div class="item-btn" data-slot="top" data-value="crop">✨ Crop Top</div>
+          </div>
+          <div class="item-row" id="opts-topcolor">
+            <div class="swatch" data-slot="topcolor" data-value="red"    style="background:#E74C3C;" title="Red"></div>
+            <div class="swatch" data-slot="topcolor" data-value="blue"   style="background:#3498DB;" title="Blue"></div>
+            <div class="swatch" data-slot="topcolor" data-value="green"  style="background:#2ECC71;" title="Green"></div>
+            <div class="swatch" data-slot="topcolor" data-value="yellow" style="background:#F1C40F;" title="Yellow"></div>
+            <div class="swatch" data-slot="topcolor" data-value="purple" style="background:#9B59B6;" title="Purple"></div>
+            <div class="swatch" data-slot="topcolor" data-value="pink"   style="background:#FF69B4;" title="Pink"></div>
+            <div class="swatch" data-slot="topcolor" data-value="white"  style="background:#ECEDEE;border:1px solid #ccc;" title="White"></div>
+            <div class="swatch" data-slot="topcolor" data-value="black"  style="background:#2C3E50;" title="Black"></div>
+          </div>
+        </div>
+
+        <!-- Bottom -->
+        <div class="option-group">
+          <h3>Bottom</h3>
+          <div class="item-row" id="opts-bottom">
+            <div class="item-btn" data-slot="bottom" data-value="jeans">👖 Jeans</div>
+            <div class="item-btn" data-slot="bottom" data-value="skirt">🩱 Skirt</div>
+            <div class="item-btn" data-slot="bottom" data-value="shorts">🩳 Shorts</div>
+            <div class="item-btn" data-slot="bottom" data-value="dress">👗 Dress</div>
+          </div>
+          <div class="item-row" id="opts-bottomcolor">
+            <div class="swatch" data-slot="bottomcolor" data-value="red"    style="background:#E74C3C;" title="Red"></div>
+            <div class="swatch" data-slot="bottomcolor" data-value="blue"   style="background:#3498DB;" title="Blue"></div>
+            <div class="swatch" data-slot="bottomcolor" data-value="green"  style="background:#2ECC71;" title="Green"></div>
+            <div class="swatch" data-slot="bottomcolor" data-value="yellow" style="background:#F1C40F;" title="Yellow"></div>
+            <div class="swatch" data-slot="bottomcolor" data-value="purple" style="background:#9B59B6;" title="Purple"></div>
+            <div class="swatch" data-slot="bottomcolor" data-value="pink"   style="background:#FF69B4;" title="Pink"></div>
+            <div class="swatch" data-slot="bottomcolor" data-value="denim"  style="background:#5B7A99;" title="Denim"></div>
+            <div class="swatch" data-slot="bottomcolor" data-value="black"  style="background:#2C3E50;" title="Black"></div>
+          </div>
+        </div>
+
+        <!-- Shoes -->
+        <div class="option-group">
+          <h3>Shoes</h3>
+          <div class="item-row" id="opts-shoes">
+            <div class="item-btn" data-slot="shoes" data-value="sneakers">👟 Sneakers</div>
+            <div class="item-btn" data-slot="shoes" data-value="heels">👠 Heels</div>
+            <div class="item-btn" data-slot="shoes" data-value="boots">🥾 Boots</div>
+            <div class="item-btn" data-slot="shoes" data-value="sandals">🩴 Sandals</div>
+          </div>
+          <div class="item-row" id="opts-shoecolor">
+            <div class="swatch" data-slot="shoecolor" data-value="red"    style="background:#E74C3C;" title="Red"></div>
+            <div class="swatch" data-slot="shoecolor" data-value="blue"   style="background:#3498DB;" title="Blue"></div>
+            <div class="swatch" data-slot="shoecolor" data-value="white"  style="background:#ECEDEE;border:1px solid #ccc;" title="White"></div>
+            <div class="swatch" data-slot="shoecolor" data-value="pink"   style="background:#FF69B4;" title="Pink"></div>
+            <div class="swatch" data-slot="shoecolor" data-value="gold"   style="background:#F5C518;" title="Gold"></div>
+            <div class="swatch" data-slot="shoecolor" data-value="black"  style="background:#2C3E50;" title="Black"></div>
+            <div class="swatch" data-slot="shoecolor" data-value="brown"  style="background:#7B4F2E;" title="Brown"></div>
+          </div>
+        </div>
+
+        <!-- Accessory -->
+        <div class="option-group">
+          <h3>Accessory</h3>
+          <div class="item-row" id="opts-accessory">
+            <div class="item-btn" data-slot="accessory" data-value="none">🚫 None</div>
+            <div class="item-btn" data-slot="accessory" data-value="hat">🎩 Hat</div>
+            <div class="item-btn" data-slot="accessory" data-value="bow">🎀 Hair Bow</div>
+            <div class="item-btn" data-slot="accessory" data-value="bag">👜 Bag</div>
+            <div class="item-btn" data-slot="accessory" data-value="sunglasses">🕶️ Sunglasses</div>
+            <div class="item-btn" data-slot="accessory" data-value="crown">👑 Crown</div>
+          </div>
+        </div>
+
+        <button class="btn-runway" id="btn-runway" onclick="goToRunway()">
+          🚶 Walk the Runway!
+        </button>
+        <p class="hint" id="hint-msg"></p>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN 2: RUNWAY ===== -->
+  <div id="screen-runway" class="screen">
+    <h2 class="runway-title">🌟 The Runway 🌟</h2>
+    <p class="runway-theme" id="runway-theme"></p>
+    <div class="runway-stage">
+      <div class="runway-floor"></div>
+      <div class="runway-lights">
+        <div class="light"></div><div class="light"></div><div class="light"></div>
+        <div class="light"></div><div class="light"></div><div class="light"></div>
+      </div>
+      <div class="runway-character-wrap" id="runway-char-wrap">
+        <canvas id="runway-character" width="48" height="64" class="character-canvas runway-canvas"></canvas>
+      </div>
+      <div class="audience">
+        <span>👏</span><span>👏</span><span>👏</span>
+        <span>👏</span><span>👏</span><span>👏</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN 3: JUDGES ===== -->
+  <div id="screen-judges" class="screen">
+    <h2 class="judges-title">The Judges Decide...</h2>
+    <div class="judges-row">
+
+      <div class="judge-card" id="judge-coco">
+        <div class="judge-avatar">💃</div>
+        <div class="judge-name">Madame Coco</div>
+        <div class="judge-quote" id="quote-coco"></div>
+        <div class="judge-score" id="score-coco">—</div>
+      </div>
+
+      <div class="judge-card" id="judge-rose">
+        <div class="judge-avatar">👵</div>
+        <div class="judge-name">Grandma Rose</div>
+        <div class="judge-quote" id="quote-rose"></div>
+        <div class="judge-score" id="score-rose">—</div>
+      </div>
+
+      <div class="judge-card" id="judge-zach">
+        <div class="judge-avatar">😎</div>
+        <div class="judge-name">Zach Attack</div>
+        <div class="judge-quote" id="quote-zach"></div>
+        <div class="judge-score" id="score-zach">—</div>
+      </div>
+
+    </div>
+
+    <div class="total-score-wrap" id="total-wrap" style="display:none">
+      <div class="total-label">Total Score</div>
+      <div class="total-score" id="total-score"></div>
+      <div class="total-msg" id="total-msg"></div>
+      <div class="theme-result" id="theme-result"></div>
+      <button class="btn-runway" onclick="playAgain()">🔄 Design Again!</button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
