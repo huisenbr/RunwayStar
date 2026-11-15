@@ -17,10 +17,15 @@
     <div class="theme-banner" id="theme-banner">
       <div class="theme-emoji" id="theme-emoji"></div>
       <div class="theme-text">
-        <div class="theme-label">Tonight's theme</div>
-        <div class="theme-name" id="theme-name"></div>
+        <label class="theme-label" for="theme-select">Pick tonight's theme</label>
+        <select class="theme-select" id="theme-select" aria-label="Pick the theme for this round"></select>
         <div class="theme-blurb" id="theme-blurb"></div>
       </div>
+    </div>
+
+    <div class="goals-panel" id="goals-panel">
+      <h3 class="goals-title">🎯 Goals</h3>
+      <ul class="goals-list" id="goals-list"></ul>
     </div>
 
     <div class="dress-layout">
@@ -28,11 +33,12 @@
       <!-- Character Preview -->
       <div class="character-frame">
         <canvas id="character" width="48" height="64" class="character-canvas"></canvas>
-        <div class="mirror-stand"></div>
       </div>
 
       <!-- Options Panel -->
       <div class="options-panel">
+
+        <div class="tabs" id="tabs" role="tablist" aria-label="Wardrobe categories"></div>
 
         <!-- Skin Tone -->
         <div class="option-group">
@@ -54,6 +60,7 @@
             <div class="item-btn" data-slot="eyes" data-value="cat">😸 Cat</div>
             <div class="item-btn" data-slot="eyes" data-value="star">⭐ Star</div>
             <div class="item-btn" data-slot="eyes" data-value="sleepy">😴 Dreamy</div>
+            <div class="item-btn" data-slot="eyes" data-value="visor">🥽 Visor</div>
           </div>
         </div>
 
@@ -76,6 +83,7 @@
             <div class="item-btn" data-slot="hair" data-value="long">🌊 Long</div>
             <div class="item-btn" data-slot="hair" data-value="curly">🌀 Curly</div>
             <div class="item-btn" data-slot="hair" data-value="short">✂️ Short</div>
+            <div class="item-btn" data-slot="hair" data-value="spiky">⚡ Spiky</div>
           </div>
           <div class="item-row" id="opts-haircolor">
             <div class="swatch" data-slot="haircolor" data-value="black"   style="background:#1a1a1a;" title="Black"></div>
@@ -85,6 +93,7 @@
             <div class="swatch" data-slot="haircolor" data-value="pink"    style="background:#F48FB1;" title="Pink"></div>
             <div class="swatch" data-slot="haircolor" data-value="blue"    style="background:#5DADE2;" title="Blue"></div>
             <div class="swatch" data-slot="haircolor" data-value="purple"  style="background:#9B59B6;" title="Purple"></div>
+            <div class="swatch" data-slot="haircolor" data-value="petal" style="background:#FFC4DD;" title="Petal Pink"></div>
           </div>
         </div>
 
@@ -96,6 +105,14 @@
             <div class="item-btn" data-slot="top" data-value="blouse">🌸 Blouse</div>
             <div class="item-btn" data-slot="top" data-value="jacket">🧥 Jacket</div>
             <div class="item-btn" data-slot="top" data-value="crop">✨ Crop Top</div>
+            <div class="item-btn" data-slot="top" data-value="puffer">🧥 Puffer Coat</div>
+            <div class="item-btn" data-slot="top" data-value="bodysuit">💥 Hero Suit</div>
+            <div class="item-btn" data-slot="top" data-value="jersey">🏀 Jersey</div>
+            <div class="item-btn" data-slot="top" data-value="striped">⚓ Striped Shirt</div>
+            <div class="item-btn" data-slot="top" data-value="leather">🎸 Leather Jacket</div>
+            <div class="item-btn" data-slot="top" data-value="blazer">👔 Blazer</div>
+            <div class="item-btn" data-slot="top" data-value="robe">🛁 Robe</div>
+            <div class="item-btn" data-slot="top" data-value="tiedye">🌈 Tie-Dye</div>
           </div>
           <div class="item-row" id="opts-topcolor">
             <div class="swatch" data-slot="topcolor" data-value="red"    style="background:#E74C3C;" title="Red"></div>
@@ -106,6 +123,8 @@
             <div class="swatch" data-slot="topcolor" data-value="pink"   style="background:#FF69B4;" title="Pink"></div>
             <div class="swatch" data-slot="topcolor" data-value="white"  style="background:#ECEDEE;border:1px solid #ccc;" title="White"></div>
             <div class="swatch" data-slot="topcolor" data-value="black"  style="background:#2C3E50;" title="Black"></div>
+            <div class="swatch" data-slot="topcolor" data-value="silver" style="background:#BDC3C7;" title="Silver"></div>
+            <div class="swatch" data-slot="topcolor" data-value="neon" style="background:#39FF14;" title="Neon"></div>
           </div>
         </div>
 
@@ -117,6 +136,14 @@
             <div class="item-btn" data-slot="bottom" data-value="skirt">🩱 Skirt</div>
             <div class="item-btn" data-slot="bottom" data-value="shorts">🩳 Shorts</div>
             <div class="item-btn" data-slot="bottom" data-value="dress">👗 Dress</div>
+            <div class="item-btn" data-slot="bottom" data-value="leggings">🩰 Leggings</div>
+            <div class="item-btn" data-slot="bottom" data-value="track">🏃 Track Pants</div>
+            <div class="item-btn" data-slot="bottom" data-value="tulle">🧁 Tulle Skirt</div>
+            <div class="item-btn" data-slot="bottom" data-value="jumpsuit">🛸 Space Pants</div>
+            <div class="item-btn" data-slot="bottom" data-value="leatherpants">🖤 Leather Pants</div>
+            <div class="item-btn" data-slot="bottom" data-value="slacks">🕴️ Slacks</div>
+            <div class="item-btn" data-slot="bottom" data-value="pajamas">🌙 PJ Pants</div>
+            <div class="item-btn" data-slot="bottom" data-value="flowy">🍃 Flowy Skirt</div>
           </div>
           <div class="item-row" id="opts-bottomcolor">
             <div class="swatch" data-slot="bottomcolor" data-value="red"    style="background:#E74C3C;" title="Red"></div>
@@ -127,6 +154,8 @@
             <div class="swatch" data-slot="bottomcolor" data-value="pink"   style="background:#FF69B4;" title="Pink"></div>
             <div class="swatch" data-slot="bottomcolor" data-value="denim"  style="background:#5B7A99;" title="Denim"></div>
             <div class="swatch" data-slot="bottomcolor" data-value="black"  style="background:#2C3E50;" title="Black"></div>
+            <div class="swatch" data-slot="bottomcolor" data-value="silver" style="background:#BDC3C7;" title="Silver"></div>
+            <div class="swatch" data-slot="bottomcolor" data-value="neon" style="background:#39FF14;" title="Neon"></div>
           </div>
         </div>
 
@@ -138,6 +167,12 @@
             <div class="item-btn" data-slot="shoes" data-value="heels">👠 Heels</div>
             <div class="item-btn" data-slot="shoes" data-value="boots">🥾 Boots</div>
             <div class="item-btn" data-slot="shoes" data-value="sandals">🩴 Sandals</div>
+            <div class="item-btn" data-slot="shoes" data-value="snowboots">❄️ Snow Boots</div>
+            <div class="item-btn" data-slot="shoes" data-value="hightops">🏀 High-Tops</div>
+            <div class="item-btn" data-slot="shoes" data-value="platforms">🎸 Platforms</div>
+            <div class="item-btn" data-slot="shoes" data-value="loafers">👞 Loafers</div>
+            <div class="item-btn" data-slot="shoes" data-value="slippers">🐰 Bunny Slippers</div>
+            <div class="item-btn" data-slot="shoes" data-value="cowboy">🤠 Cowboy Boots</div>
           </div>
           <div class="item-row" id="opts-shoecolor">
             <div class="swatch" data-slot="shoecolor" data-value="red"    style="background:#E74C3C;" title="Red"></div>
@@ -147,6 +182,8 @@
             <div class="swatch" data-slot="shoecolor" data-value="gold"   style="background:#F5C518;" title="Gold"></div>
             <div class="swatch" data-slot="shoecolor" data-value="black"  style="background:#2C3E50;" title="Black"></div>
             <div class="swatch" data-slot="shoecolor" data-value="brown"  style="background:#7B4F2E;" title="Brown"></div>
+            <div class="swatch" data-slot="shoecolor" data-value="silver" style="background:#BDC3C7;" title="Silver"></div>
+            <div class="swatch" data-slot="shoecolor" data-value="neon" style="background:#39FF14;" title="Neon"></div>
           </div>
         </div>
 
@@ -160,13 +197,28 @@
             <div class="item-btn" data-slot="accessory" data-value="bag">👜 Bag</div>
             <div class="item-btn" data-slot="accessory" data-value="sunglasses">🕶️ Sunglasses</div>
             <div class="item-btn" data-slot="accessory" data-value="crown">👑 Crown</div>
+            <div class="item-btn" data-slot="accessory" data-value="beanie">🧶 Beanie</div>
+            <div class="item-btn" data-slot="accessory" data-value="cape">🦸 Cape</div>
+            <div class="item-btn" data-slot="accessory" data-value="mask">🎭 Hero Mask</div>
+            <div class="item-btn" data-slot="accessory" data-value="headband">🎽 Headband</div>
+            <div class="item-btn" data-slot="accessory" data-value="wings">🧚 Fairy Wings</div>
+            <div class="item-btn" data-slot="accessory" data-value="piratehat">🏴‍☠️ Pirate Hat</div>
+            <div class="item-btn" data-slot="accessory" data-value="eyepatch">🩹 Eyepatch</div>
+            <div class="item-btn" data-slot="accessory" data-value="sash">🎗️ Sash</div>
+            <div class="item-btn" data-slot="accessory" data-value="helmet">🪐 Space Helmet</div>
+            <div class="item-btn" data-slot="accessory" data-value="bowtie">🪢 Bow Tie</div>
+            <div class="item-btn" data-slot="accessory" data-value="pearls">📿 Pearls</div>
+            <div class="item-btn" data-slot="accessory" data-value="sleepmask">😴 Sleep Mask</div>
+            <div class="item-btn" data-slot="accessory" data-value="flowercrown">🌼 Flower Crown</div>
           </div>
+          <p class="slot-note" id="accessory-note"></p>
         </div>
 
         <button class="btn-runway" id="btn-runway" onclick="goToRunway()">
           🚶 Walk the Runway!
         </button>
         <p class="hint" id="hint-msg"></p>
+        <button class="btn-reset" id="btn-reset" type="button">Reset progress</button>
 
       </div>
     </div>
@@ -225,6 +277,7 @@
       <div class="total-score" id="total-score"></div>
       <div class="total-msg" id="total-msg"></div>
       <div class="theme-result" id="theme-result"></div>
+      <div class="unlock-result" id="unlock-result"></div>
       <button class="btn-runway" onclick="playAgain()">🔄 Design Again!</button>
     </div>
   </div>

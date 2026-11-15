@@ -111,6 +111,7 @@ function layer(ctx, key, tintColor, pixelFn) {
 function redrawAll() {
   drawCharacter('character');
   drawCharacter('runway-character');
+  refreshThumbs();
 }
 
 // ─── SHORTHAND HELPERS ───────────────────────────────────────────────────────
@@ -133,6 +134,7 @@ const outfit = {
   shoes:       null,
   shoecolor:   'black',
   accessory:   'none',
+  accessory2:  'none',
 };
 
 const SKIN_COLORS = {
@@ -147,11 +149,13 @@ const COLOR_MAP = {
   red:    '#E74C3C', blue:   '#3498DB', green:  '#2ECC71', yellow: '#F1C40F',
   purple: '#9B59B6', pink:   '#FF69B4', white:  '#ECEDEE', black:  '#2C3E50',
   denim:  '#5B7A99', gold:   '#F5C518', brown:  '#7B4F2E',
+  silver: '#BDC3C7', neon:   '#39FF14',
 };
 
 const HAIR_COLORS = {
   black: '#1a1a1a', brown: '#7B4F2E', blonde: '#F5D86E',
   red:   '#C0392B', pink:  '#F48FB1', blue:   '#5DADE2', purple: '#9B59B6',
+  petal: '#FFC4DD',
 };
 
 function skinColor()      { return SKIN_COLORS[outfit.skin]        || '#FDDBB4'; }
@@ -170,7 +174,10 @@ function darken(hex, amt) {
 function drawCharacter(canvasId) {
   const canvas = document.getElementById(canvasId);
   if (!canvas) return;
-  const ctx = canvas.getContext('2d');
+  paintCharacter(canvas.getContext('2d'));
+}
+
+function paintCharacter(ctx) {
   ctx.clearRect(0, 0, CW, CH);
 
   drawBody(ctx);
@@ -286,6 +293,12 @@ function drawEyePixels(ctx, style) {
   } else if (style === 'sleepy') {
     drawSleepyEye(ctx, 14);
     drawSleepyEye(ctx, 27);
+  } else if (style === 'visor') {
+    // Space visor: one wraparound lens
+    px(ctx, '#7F8C8D', [[11, 8, 26, 9]]);
+    px(ctx, '#00E5FF', [[12, 9, 24, 7]]);
+    px(ctx, '#00B8D4', [[12, 14, 24, 2]]);
+    px(ctx, '#E0FFFF', [[14, 10, 5, 1], [14, 11, 2, 1]]);
   }
 }
 
@@ -412,6 +425,17 @@ function drawHairPixels(ctx, style) {
     ]);
     px(ctx, hd, [[11, 5, 26, 2]]); // parting shadow
   }
+
+  else if (style === 'spiky') {
+    // Rock-star spikes
+    px(ctx, h, [
+      [12, 2, 24, 6],
+      [10, 6, 3, 8], [35, 6, 3, 8],              // sides
+      [12, 0, 2, 2], [17, 0, 3, 2], [23, 0, 2, 2], [28, 0, 3, 2], [34, 0, 2, 2],  // spikes
+      [8, 3, 4, 2], [36, 3, 4, 2], [7, 2, 2, 1], [39, 2, 2, 1],                   // side spikes
+    ]);
+    px(ctx, hd, [[14, 2, 1, 4], [19, 2, 1, 4], [24, 2, 1, 4], [29, 2, 1, 4], [12, 7, 24, 1]]);
+  }
 }
 
 // ─── TOP ──────────────────────────────────────────────────────────────────────
@@ -479,6 +503,75 @@ function drawTopPixels(ctx, style) {
     // Thin strap lines
     px(ctx, c, [[19, 24, 4, 3], [25, 24, 4, 3]]);
   }
+
+  else if (style === 'puffer') {
+    // Big quilted winter coat
+    px(ctx, c, [[13, 26, 22, 17], [7, 28, 7, 13], [34, 28, 7, 13], [18, 25, 12, 2]]);
+    px(ctx, cd, [
+      [13, 30, 22, 1], [13, 34, 22, 1], [13, 38, 22, 1],
+      [7, 32, 7, 1], [34, 32, 7, 1], [7, 36, 7, 1], [34, 36, 7, 1],
+      [23, 26, 2, 17],                       // zipper
+    ]);
+  }
+
+  else if (style === 'bodysuit') {
+    // Hero suit with a chest emblem and belt
+    px(ctx, c, [[14, 27, 20, 15], [8, 28, 6, 13], [34, 28, 6, 13]]);
+    px(ctx, cd, [[14, 27, 1, 15], [33, 27, 1, 15], [8, 40, 6, 1], [34, 40, 6, 1]]);
+    px(ctx, '#F1C40F', [[23, 29, 2, 1], [21, 30, 6, 1], [20, 31, 8, 2], [21, 33, 6, 1], [23, 34, 2, 1], [14, 40, 20, 2]]);
+    px(ctx, '#C0392B', [[23, 31, 2, 1]]);
+  }
+
+  else if (style === 'jersey') {
+    // Sleeveless team jersey with a number
+    px(ctx, c, [[14, 27, 20, 15]]);
+    px(ctx, '#ffffff', [
+      [14, 27, 2, 9], [32, 27, 2, 9],        // armhole trim
+      [20, 27, 8, 1], [21, 28, 6, 1], [22, 29, 4, 1],   // v-neck
+      [21, 31, 7, 2], [25, 33, 2, 2], [24, 35, 2, 2], [23, 37, 2, 2],  // number 7
+    ]);
+    px(ctx, cd, [[14, 41, 20, 1]]);
+  }
+
+  else if (style === 'striped') {
+    // Long-sleeve sailor stripes
+    px(ctx, c, [[14, 27, 20, 15], [8, 28, 6, 13], [34, 28, 6, 13]]);
+    px(ctx, '#ffffff', [29, 32, 35, 38].flatMap(y => [[14, y, 20, 1], [8, y, 6, 1], [34, y, 6, 1]]));
+    px(ctx, cd, [[19, 27, 10, 1]]);
+  }
+
+  else if (style === 'leather') {
+    // Leather jacket: off-center zip and studs
+    px(ctx, c, [[14, 27, 20, 15], [8, 28, 6, 13], [34, 28, 6, 13]]);
+    px(ctx, cd, [[14, 27, 5, 7], [29, 27, 5, 7], [14, 27, 20, 1], [8, 39, 6, 2], [34, 39, 6, 2]]);
+    px(ctx, '#ECF0F1', [[20, 28, 1, 3], [21, 31, 1, 3], [22, 34, 1, 3], [23, 37, 1, 4]]);
+    px(ctx, '#BDC3C7', [[9, 28, 1, 1], [11, 28, 1, 1], [36, 28, 1, 1], [38, 28, 1, 1]]);
+    px(ctx, 'rgba(255,255,255,0.25)', [[10, 30, 1, 8], [36, 30, 1, 8]]);
+  }
+
+  else if (style === 'blazer') {
+    // Tailored blazer over a white shirt
+    px(ctx, c, [[14, 27, 20, 15], [8, 28, 6, 13], [34, 28, 6, 13]]);
+    px(ctx, '#ffffff', [[20, 27, 8, 2], [21, 29, 6, 2], [22, 31, 4, 2], [23, 33, 2, 1]]);
+    px(ctx, cd, [[19, 27, 1, 7], [28, 27, 1, 7], [14, 27, 1, 15], [33, 27, 1, 15], [27, 37, 4, 1]]);
+    px(ctx, '#1a1a1a', [[23, 35, 2, 1], [23, 38, 2, 1]]);
+  }
+
+  else if (style === 'robe') {
+    // Fuzzy bathrobe, long enough to cover the knees
+    px(ctx, c, [[13, 27, 22, 26], [7, 28, 7, 12], [34, 28, 7, 12]]);
+    px(ctx, '#ffffff', [[7, 38, 7, 2], [34, 38, 7, 2], [19, 27, 3, 9], [26, 27, 3, 9]]);
+    px(ctx, cd, [[13, 40, 22, 2], [22, 42, 2, 5], [25, 42, 2, 4], [13, 27, 1, 26], [34, 27, 1, 26]]);
+  }
+
+  else if (style === 'tiedye') {
+    // Tie-dye tee with color swirls
+    px(ctx, c, [[14, 27, 20, 14], [8, 28, 6, 8], [34, 28, 6, 8]]);
+    px(ctx, '#FF69B4', [[16, 29, 4, 2], [27, 33, 4, 3], [9, 30, 3, 2], [20, 38, 3, 2]]);
+    px(ctx, '#F1C40F', [[22, 31, 4, 3], [15, 36, 4, 2], [35, 31, 3, 2], [29, 38, 3, 2]]);
+    px(ctx, '#5DADE2', [[28, 28, 3, 2], [19, 33, 3, 2], [24, 36, 4, 2], [10, 33, 3, 2]]);
+    px(ctx, cd, [[19, 27, 10, 2]]);
+  }
 }
 
 // ─── BOTTOM ───────────────────────────────────────────────────────────────────
@@ -544,6 +637,60 @@ function drawBottomPixels(ctx, style) {
     ]);
     // Hem detail
     px(ctx, '#ffffff', [[9, 59, 30, 1]]);
+  }
+
+  else if (style === 'leggings') {
+    px(ctx, c, [[14, 41, 20, 2], [15, 43, 8, 17], [25, 43, 8, 17]]);
+    px(ctx, cd, [[15, 43, 1, 17], [32, 43, 1, 17], [14, 41, 20, 1]]);
+  }
+
+  else if (style === 'track') {
+    // Track pants with side stripes
+    px(ctx, c, [[14, 41, 20, 2], [14, 43, 9, 17], [25, 43, 9, 17]]);
+    px(ctx, cd, [[22, 43, 3, 17], [14, 58, 9, 2], [25, 58, 9, 2]]);
+    px(ctx, '#ffffff', [[14, 43, 1, 15], [15, 43, 1, 15], [32, 43, 1, 15], [33, 43, 1, 15], [22, 41, 1, 3], [25, 41, 1, 3]]);
+  }
+
+  else if (style === 'tulle') {
+    // Puffy fairy skirt with sparkles
+    px(ctx, c, [[14, 41, 20, 2], [11, 43, 26, 4], [9, 47, 30, 5]]);
+    px(ctx, 'rgba(255,255,255,0.4)', [[10, 45, 28, 2], [8, 50, 32, 2]]);
+    px(ctx, '#ffffff', [[13, 48, 1, 1], [20, 44, 1, 1], [28, 49, 1, 1], [34, 46, 1, 1], [17, 51, 1, 1], [31, 51, 1, 1]]);
+  }
+
+  else if (style === 'jumpsuit') {
+    // Space suit legs with belt and knee pads
+    px(ctx, c, [[14, 41, 20, 2], [14, 43, 9, 17], [25, 43, 9, 17]]);
+    px(ctx, cd, [[22, 43, 3, 17], [15, 50, 7, 3], [26, 50, 7, 3], [15, 45, 3, 2], [30, 45, 3, 2]]);
+    px(ctx, '#BDC3C7', [[14, 41, 20, 2]]);
+    px(ctx, '#F1C40F', [[23, 41, 2, 2]]);
+  }
+
+  else if (style === 'leatherpants') {
+    px(ctx, c, [[14, 41, 20, 2], [14, 43, 9, 17], [25, 43, 9, 17]]);
+    px(ctx, cd, [[22, 43, 3, 17], [14, 43, 1, 17], [33, 43, 1, 17]]);
+    px(ctx, 'rgba(255,255,255,0.35)', [[16, 44, 1, 14], [27, 44, 1, 14]]);
+    px(ctx, '#1a1a1a', [[14, 41, 20, 1]]);
+    px(ctx, '#BDC3C7', [[23, 41, 2, 2]]);
+  }
+
+  else if (style === 'slacks') {
+    // Pressed dress pants
+    px(ctx, c, [[14, 41, 20, 2], [14, 43, 9, 17], [25, 43, 9, 17]]);
+    px(ctx, cd, [[14, 41, 20, 1], [22, 43, 3, 17], [18, 44, 1, 16], [29, 44, 1, 16]]);
+  }
+
+  else if (style === 'pajamas') {
+    // Loose PJ pants with polka dots
+    px(ctx, c, [[14, 41, 20, 2], [13, 43, 10, 17], [25, 43, 10, 17]]);
+    px(ctx, cd, [[14, 41, 20, 1], [13, 58, 10, 2], [25, 58, 10, 2]]);
+    px(ctx, '#ffffff', [[16, 45, 1, 1], [20, 48, 1, 1], [16, 52, 1, 1], [20, 55, 1, 1], [27, 46, 1, 1], [31, 49, 1, 1], [28, 53, 1, 1], [32, 56, 1, 1]]);
+  }
+
+  else if (style === 'flowy') {
+    // Long flowy festival skirt
+    px(ctx, c, [[14, 41, 20, 2], [12, 43, 24, 6], [10, 49, 28, 6], [9, 55, 30, 5]]);
+    px(ctx, cd, [[9, 59, 4, 1], [17, 59, 4, 1], [25, 59, 4, 1], [33, 59, 4, 1], [9, 55, 1, 5], [38, 55, 1, 5], [18, 44, 1, 14], [29, 44, 1, 14]]);
   }
 }
 
@@ -619,12 +766,51 @@ function drawShoePixels(ctx, style) {
       [31, 59,  3, 2],
     ]);
   }
+
+  else if (style === 'snowboots') {
+    px(ctx, c, [[12, 53, 11, 11], [25, 53, 11, 11]]);
+    px(ctx, '#ffffff', [[11, 51, 13, 3], [24, 51, 13, 3]]);
+    px(ctx, cd, [[12, 62, 11, 2], [25, 62, 11, 2], [12, 57, 11, 1], [25, 57, 11, 1]]);
+  }
+
+  else if (style === 'hightops') {
+    px(ctx, c, [[13, 55, 9, 5], [26, 55, 9, 5], [11, 60, 13, 3], [24, 60, 13, 3]]);
+    px(ctx, '#ffffff', [[11, 62, 13, 1], [24, 62, 13, 1], [16, 56, 3, 1], [16, 58, 3, 1], [29, 56, 3, 1], [29, 58, 3, 1], [13, 55, 9, 1], [26, 55, 9, 1]]);
+    px(ctx, cd, [[11, 63, 13, 1], [24, 63, 13, 1]]);
+  }
+
+  else if (style === 'platforms') {
+    px(ctx, c, [[13, 55, 9, 3], [26, 55, 9, 3], [11, 58, 13, 3], [24, 58, 13, 3]]);
+    px(ctx, cd, [[11, 61, 13, 3], [24, 61, 13, 3]]);
+    px(ctx, '#BDC3C7', [[16, 56, 3, 1], [29, 56, 3, 1]]);
+  }
+
+  else if (style === 'loafers') {
+    px(ctx, c, [[11, 61, 13, 3], [24, 61, 13, 3]]);
+    px(ctx, cd, [[13, 61, 7, 1], [26, 61, 7, 1], [11, 63, 13, 1], [24, 63, 13, 1]]);
+    px(ctx, '#F5C518', [[16, 61, 2, 1], [29, 61, 2, 1]]);
+  }
+
+  else if (style === 'slippers') {
+    // Bunny slippers
+    px(ctx, c, [[10, 59, 15, 5], [23, 59, 15, 5], [12, 55, 2, 4], [17, 55, 2, 4], [26, 55, 2, 4], [31, 55, 2, 4]]);
+    px(ctx, '#F48FB1', [[12, 56, 1, 2], [17, 56, 1, 2], [26, 56, 1, 2], [31, 56, 1, 2], [15, 61, 2, 1], [28, 61, 2, 1]]);
+    px(ctx, '#1a1a1a', [[13, 60, 1, 1], [18, 60, 1, 1], [26, 60, 1, 1], [31, 60, 1, 1]]);
+  }
+
+  else if (style === 'cowboy') {
+    px(ctx, c, [[13, 50, 10, 10], [25, 50, 10, 10], [10, 60, 13, 3], [24, 60, 13, 3]]);
+    px(ctx, cd, [[13, 50, 10, 1], [25, 50, 10, 1], [10, 63, 11, 1], [24, 63, 11, 1], [21, 62, 2, 2], [35, 62, 2, 2]]);
+    px(ctx, '#F5C518', [[15, 53, 6, 1], [27, 53, 6, 1], [16, 55, 4, 1], [28, 55, 4, 1]]);
+  }
 }
 
 // ─── ACCESSORY ────────────────────────────────────────────────────────────────
 function drawAccessory(ctx) {
-  if (!outfit.accessory || outfit.accessory === 'none') return;
-  layer(ctx, `accessory_${outfit.accessory}`, null, () => drawAccessoryPixels(ctx, outfit.accessory));
+  [outfit.accessory, outfit.accessory2].forEach(acc => {
+    if (!acc || acc === 'none') return;
+    layer(ctx, `accessory_${acc}`, null, () => drawAccessoryPixels(ctx, acc));
+  });
 }
 
 function drawAccessoryPixels(ctx, style) {
@@ -691,34 +877,493 @@ function drawAccessoryPixels(ctx, style) {
     px(ctx, '#3498DB', [[23, 3, 3, 2]]);
     px(ctx, '#E74C3C', [[31, 3, 3, 2]]);
   }
+
+  else if (style === 'beanie') {
+    px(ctx, '#E74C3C', [[11, 1, 26, 6]]);
+    px(ctx, '#C0392B', [[10, 6, 28, 3], [14, 1, 1, 5], [19, 1, 1, 5], [24, 1, 1, 5], [29, 1, 1, 5], [34, 1, 1, 5]]);
+    px(ctx, '#ffffff', [[21, 0, 6, 2]]);
+  }
+
+  else if (style === 'cape') {
+    px(ctx, '#C0392B', [[8, 26, 6, 2], [34, 26, 6, 2], [5, 27, 3, 31], [40, 27, 3, 31], [4, 52, 4, 6], [40, 52, 4, 6]]);
+    px(ctx, '#922B21', [[5, 27, 1, 31], [42, 27, 1, 31]]);
+    px(ctx, '#F1C40F', [[16, 26, 2, 2], [30, 26, 2, 2]]);
+  }
+
+  else if (style === 'mask') {
+    // Hero mask with eye holes
+    px(ctx, '#2C3E50', [[11, 8, 26, 1], [11, 9, 3, 7], [21, 9, 6, 7], [34, 9, 3, 7], [11, 16, 26, 1], [9, 10, 2, 2], [37, 10, 2, 2]]);
+  }
+
+  else if (style === 'headband') {
+    px(ctx, '#ffffff', [[10, 5, 28, 3]]);
+    px(ctx, '#E74C3C', [[10, 6, 28, 1]]);
+  }
+
+  else if (style === 'wings') {
+    px(ctx, 'rgba(174,214,241,0.8)', [[1, 26, 7, 10], [40, 26, 7, 10], [2, 37, 6, 7], [40, 37, 6, 7]]);
+    px(ctx, '#85C1E9', [[1, 26, 1, 10], [46, 26, 1, 10], [2, 37, 1, 7], [45, 37, 1, 7], [1, 26, 7, 1], [40, 26, 7, 1]]);
+    px(ctx, '#ffffff', [[3, 29, 1, 1], [43, 30, 1, 1], [4, 40, 1, 1], [42, 41, 1, 1]]);
+  }
+
+  else if (style === 'piratehat') {
+    px(ctx, '#1a1a1a', [[12, 0, 24, 4], [8, 4, 32, 3], [6, 2, 4, 3], [38, 2, 4, 3]]);
+    px(ctx, '#F5C518', [[8, 6, 32, 1]]);
+    px(ctx, '#ffffff', [[22, 1, 4, 2], [21, 3, 6, 1]]);
+    px(ctx, '#1a1a1a', [[23, 1, 1, 1], [25, 1, 1, 1]]);
+  }
+
+  else if (style === 'eyepatch') {
+    px(ctx, '#1a1a1a', [[10, 8, 28, 1], [13, 9, 8, 7]]);
+  }
+
+  else if (style === 'sash') {
+    // Diagonal sash from shoulder to hip
+    for (let i = 0; i < 15; i++) {
+      px(ctx, '#E74C3C', [[14 + Math.round(i * 1.2), 27 + i, 4, 1]]);
+      px(ctx, '#F5C518', [[14 + Math.round(i * 1.2), 27 + i, 1, 1]]);
+    }
+  }
+
+  else if (style === 'helmet') {
+    // Glass space helmet
+    px(ctx, 'rgba(190,225,255,0.3)', [[8, 1, 32, 23]]);
+    px(ctx, '#ECF0F1', [[10, 0, 28, 1], [8, 1, 2, 2], [38, 1, 2, 2], [7, 3, 1, 20], [40, 3, 1, 20], [8, 23, 2, 1], [38, 23, 2, 1]]);
+    px(ctx, '#BDC3C7', [[12, 24, 24, 3]]);
+    px(ctx, '#ffffff', [[11, 3, 3, 1], [10, 4, 1, 3]]);
+  }
+
+  else if (style === 'bowtie') {
+    px(ctx, '#1a1a1a', [[17, 24, 5, 3], [26, 24, 5, 3]]);
+    px(ctx, '#34495E', [[22, 24, 4, 3]]);
+  }
+
+  else if (style === 'pearls') {
+    const ys = [27, 28, 29, 29, 28, 27];
+    [15, 18, 21, 24, 27, 30].forEach((x, i) => {
+      px(ctx, '#FDFEFE', [[x, ys[i], 2, 2]]);
+      px(ctx, '#D5D8DC', [[x + 1, ys[i] + 1, 1, 1]]);
+    });
+  }
+
+  else if (style === 'sleepmask') {
+    px(ctx, '#F8BBD0', [[11, 9, 26, 7], [9, 10, 2, 2], [37, 10, 2, 2]]);
+    px(ctx, '#1a1a1a', [[15, 12, 5, 1], [28, 12, 5, 1], [15, 13, 1, 1], [17, 13, 1, 1], [19, 13, 1, 1], [28, 13, 1, 1], [30, 13, 1, 1], [32, 13, 1, 1]]);
+  }
+
+  else if (style === 'flowercrown') {
+    px(ctx, '#27AE60', [[10, 4, 28, 1], [15, 3, 2, 1], [27, 3, 2, 1], [21, 4, 2, 1]]);
+    px(ctx, '#FF69B4', [[11, 2, 3, 3], [23, 1, 3, 3], [35, 2, 3, 3]]);
+    px(ctx, '#F1C40F', [[17, 2, 3, 3], [29, 2, 3, 3], [12, 3, 1, 1], [24, 2, 1, 1], [36, 3, 1, 1]]);
+    px(ctx, '#ffffff', [[18, 3, 1, 1], [30, 3, 1, 1]]);
+  }
+}
+
+// ─── UNLOCKS & GOALS ─────────────────────────────────────────────────────────
+// Everything in the dressing room is keyed "slot:value" (themes are "theme:id").
+// You start with a basic outfit. Finishing goals unlocks items, colors and themes.
+// Progress is saved in the browser (localStorage). Skin tones are always free.
+const SAVE_KEY         = 'runwayStar.progress.v1';
+const MAX_ACTIVE_GOALS = 3;
+
+const STARTER_UNLOCKS = [
+  'eyes:round', 'mouth:smile', 'hair:curly', 'top:blouse', 'bottom:jeans', 'shoes:sandals',
+  'accessory:none',
+  'haircolor:black',   'haircolor:brown',
+  'topcolor:red',      'topcolor:white',
+  'bottomcolor:blue',  'bottomcolor:denim', 'bottomcolor:black',
+  'shoecolor:black',   'shoecolor:brown',   'shoecolor:white',
+];
+
+const STARTER_PICKS = {
+  eyes: 'round', mouth: 'smile', hair: 'curly', top: 'blouse', bottom: 'jeans', shoes: 'sandals', accessory: 'none', accessory2: 'none',
+  skin: 'tone1', haircolor: 'black', topcolor: 'red', bottomcolor: 'blue', shoecolor: 'black',
+};
+const OUTFIT_SLOTS = Object.keys(STARTER_PICKS);
+let savedOutfit = null;   // outfit restored from the last visit
+
+const DEFAULT_PICKS = { skin: 'tone1', haircolor: 'black', topcolor: 'red', bottomcolor: 'blue', shoecolor: 'black' };
+const FREE_STYLE = { name: 'Free Style', emoji: '✨', blurb: 'No theme tonight. Wear whatever you like!' };
+const COLOR_SLOT_LABEL = { haircolor: 'hair', topcolor: 'top', bottomcolor: 'bottom', shoecolor: 'shoes' };
+
+// Each goal: id, text, requires (goal ids that must be done first), reward (unlock keys),
+// test(c) where c = { outfit, scores, total, themeId, themeRaw } for the round just judged.
+// Up to MAX_ACTIVE_GOALS available goals are shown at a time, in this order.
+const GOALS = [
+  { id: 'first-walk',  requires: [],              text: 'Finish a runway walk',
+    reward: ['accessory:sunglasses', 'mouth:grin', 'hair:short', 'topcolor:blue'],
+    test: c => true },
+  { id: 'shades',      requires: ['first-walk'],  text: 'Score 19+ while wearing sunglasses',
+    reward: ['theme:beach', 'bottom:shorts', 'top:crop', 'topcolor:yellow', 'shoecolor:pink'],
+    test: c => c.total >= 19 && wears(c.outfit, 'sunglasses') },
+  { id: 'judge-fans',  requires: ['first-walk'],  text: 'Get 4+ from all three judges',
+    reward: ['eyes:cat', 'eyes:star', 'hair:bun', 'hair:long', 'haircolor:blonde', 'haircolor:red'],
+    test: c => Object.values(c.scores).every(v => v >= 4) },
+  { id: 'beach-pro', theme: 'beach',   requires: ['shades'],      text: 'Score 23+ on Beach Day',
+    reward: ['theme:street', 'shoes:sneakers', 'top:tshirt', 'accessory:hat', 'topcolor:black', 'shoecolor:blue'],
+    test: c => c.themeId === 'beach' && c.total >= 23 },
+  { id: 'on-theme',    requires: ['shades'],      text: 'Get "Nailed it" in a themed round',
+    reward: ['eyes:sleepy', 'mouth:pout', 'topcolor:green', 'bottomcolor:red', 'bottomcolor:green'],
+    test: c => !!c.themeId && c.themeRaw >= 5 },
+  { id: 'color-crazy', requires: ['judge-fans'],  text: 'Wear four different colors (hair, top, bottom and shoes)',
+    reward: ['mouth:tongue', 'topcolor:purple', 'bottomcolor:yellow', 'bottomcolor:purple', 'haircolor:blue', 'haircolor:purple'],
+    test: c => new Set([c.outfit.haircolor, c.outfit.topcolor, c.outfit.bottomcolor, c.outfit.shoecolor]).size === 4 },
+  { id: 'street-star', theme: 'street', requires: ['beach-pro'],   text: 'Score 23+ on Street Style',
+    reward: ['theme:garden', 'feature:accessory2', 'bottom:skirt', 'bottom:dress', 'accessory:bow', 'topcolor:pink', 'bottomcolor:pink', 'haircolor:pink'],
+    test: c => c.themeId === 'street' && c.total >= 23 },
+  { id: 'garden-queen', theme: 'garden', requires: ['street-star'], text: 'Score 21+ on Garden Party',
+    reward: ['theme:gala', 'shoes:heels', 'top:jacket', 'accessory:crown', 'shoecolor:red', 'shoecolor:gold'],
+    test: c => c.themeId === 'garden' && c.total >= 21 },
+  { id: 'gala-star', theme: 'gala',   requires: ['garden-queen'], text: 'Score 25+ on Royal Gala',
+    reward: ['theme:rainy', 'shoes:boots', 'accessory:bag'],
+    test: c => c.themeId === 'gala' && c.total >= 25 },
+  // After the gala, two branches open: a cozy one (Winter, Fairy, Pajama, Festival)
+  // and a bold one (Superhero, Sports, Pirate, Space, Glam, Black Tie).
+  { id: 'rainy-star',  requires: ['gala-star'],   theme: 'rainy',     min: 26,
+    reward: ['theme:winter', 'top:puffer', 'bottom:leggings', 'shoes:snowboots', 'accessory:beanie'] },
+  { id: 'hero-time',   requires: ['gala-star'],   text: 'Score 25+ wearing two accessories',
+    reward: ['theme:superhero', 'top:bodysuit', 'accessory:cape', 'accessory:mask'],
+    test: c => c.total >= 25 && c.outfit.accessory !== 'none' && c.outfit.accessory2 !== 'none' },
+  { id: 'winter-star', requires: ['rainy-star'],  theme: 'winter',    min: 22,
+    reward: ['theme:fairy', 'bottom:tulle', 'accessory:wings', 'haircolor:petal'] },
+  { id: 'hero-star',   requires: ['hero-time'],   theme: 'superhero', min: 23,
+    reward: ['theme:sports', 'top:jersey', 'bottom:track', 'shoes:hightops', 'accessory:headband'] },
+  { id: 'fairy-star',  requires: ['winter-star'], theme: 'fairy',     min: 22,
+    reward: ['theme:pajama', 'top:robe', 'bottom:pajamas', 'shoes:slippers', 'accessory:sleepmask'] },
+  { id: 'sports-star', requires: ['hero-star'],   theme: 'sports',    min: 22,
+    reward: ['theme:pirate', 'top:striped', 'accessory:piratehat', 'accessory:eyepatch', 'accessory:sash'] },
+  { id: 'pajama-star', requires: ['fairy-star'],  theme: 'pajama',    min: 20,
+    reward: ['theme:festival', 'top:tiedye', 'bottom:flowy', 'shoes:cowboy', 'accessory:flowercrown'] },
+  { id: 'pirate-star', requires: ['sports-star'], theme: 'pirate',    min: 23,
+    reward: ['theme:space', 'bottom:jumpsuit', 'eyes:visor', 'accessory:helmet', 'topcolor:silver', 'bottomcolor:silver', 'shoecolor:silver', 'topcolor:neon', 'bottomcolor:neon', 'shoecolor:neon'] },
+  { id: 'festival-star', requires: ['pajama-star'], theme: 'festival', min: 21,
+    reward: [] },
+  { id: 'space-star',  requires: ['pirate-star'], theme: 'space',     min: 22,
+    reward: ['theme:glam', 'top:leather', 'bottom:leatherpants', 'shoes:platforms', 'hair:spiky'] },
+  { id: 'glam-star',   requires: ['space-star'],  theme: 'glam',      min: 23,
+    reward: ['theme:blacktie', 'top:blazer', 'bottom:slacks', 'shoes:loafers', 'accessory:bowtie', 'accessory:pearls'] },
+  { id: 'blacktie-star', requires: ['glam-star'], theme: 'blacktie',  min: 21,
+    reward: [] },
+  { id: 'perfect-run', requires: ['gala-star'],   text: 'Score a perfect 30 in a themed round',
+    reward: [],
+    test: c => !!c.themeId && c.total >= 30 },
+];
+
+// "Score N+ on <theme>" goals just list theme and min; fill in their text and test here
+GOALS.forEach(g => {
+  if (!g.theme || g.test) return;
+  Object.defineProperty(g, 'text', {
+    get() { const t = THEMES.find(t => t.id === g.theme); return `Score ${g.min}+ on ${t ? t.name : g.theme}`; },
+    enumerable: true,
+  });
+  g.test = c => c.themeId === g.theme && c.total >= g.min;
+});
+
+let progress = { unlocked: new Set(STARTER_UNLOCKS), done: new Set() };
+let newlyUnlocked = new Set();   // gets a sparkle in the dressing room until picked
+let resetArmed = false;
+
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    (data.unlocked || []).forEach(k => progress.unlocked.add(k));
+    (data.done || []).forEach(id => { if (GOALS.some(g => g.id === id)) progress.done.add(id); });
+    if (data.outfit && typeof data.outfit === 'object') savedOutfit = data.outfit;
+    if (typeof data.theme === 'string') savedThemeId = data.theme;
+  } catch (e) { /* storage blocked or bad data: just start fresh */ }
+}
+
+function saveProgress() {
+  try {
+    const current = {};
+    OUTFIT_SLOTS.forEach(slot => { if (outfit[slot]) current[slot] = outfit[slot]; });
+    localStorage.setItem(SAVE_KEY, JSON.stringify({
+      unlocked: [...progress.unlocked], done: [...progress.done], outfit: current,
+      theme: currentTheme ? currentTheme.id : '',
+    }));
+  } catch (e) { /* ignore */ }
+}
+
+function isUnlocked(slot, value) {
+  return slot === 'skin' || progress.unlocked.has(`${slot}:${value}`);
+}
+
+// True if the outfit has this accessory in either accessory slot
+function wears(o, x) { return o.accessory === x || o.accessory2 === x; }
+
+function hasSecondAccessory() { return progress.unlocked.has('feature:accessory2'); }
+
+function unlockedThemes() {
+  return THEMES.filter(t => progress.unlocked.has(`theme:${t.id}`));
+}
+
+function activeGoals() {
+  return GOALS
+    .filter(g => !progress.done.has(g.id) && g.requires.every(r => progress.done.has(r)))
+    .slice(0, MAX_ACTIVE_GOALS);
+}
+
+function labelFor(key) {
+  if (key === 'feature:accessory2') return 'Wear two accessories';
+  if (key.startsWith('theme:')) {
+    const t = THEMES.find(t => t.id === key.slice(6));
+    return t ? `${t.name} theme` : key;
+  }
+  const [slot, value] = key.split(':');
+  const el = document.querySelector(`[data-slot="${slot}"][data-value="${value}"]`);
+  if (!el) return key;
+  if (COLOR_SLOT_LABEL[slot]) return `${el.getAttribute('title') || value} ${COLOR_SLOT_LABEL[slot]}`;
+  return el.dataset.label || el.textContent.trim();
+}
+
+function lockHint(slot, value) {
+  const key = `${slot}:${value}`;
+  const goal = GOALS.find(g => g.reward.includes(key));
+  if (!goal) return 'Locked.';
+  const available = goal.requires.every(r => progress.done.has(r));
+  return `🔒 Locked. Unlock it with the goal: ${goal.text}.` + (available ? '' : ' (Finish earlier goals first.)');
+}
+
+function refreshLocks() {
+  const reach = new Set(activeGoals().flatMap(g => g.reward));
+  document.querySelectorAll('[data-slot]').forEach(el => {
+    const { slot, value } = el.dataset;
+    const locked = !isUnlocked(slot, value);
+    el.classList.toggle('locked', locked);
+    el.classList.toggle('is-new', !locked && newlyUnlocked.has(`${slot}:${value}`));
+    if (locked) el.setAttribute('aria-disabled', 'true'); else el.removeAttribute('aria-disabled');
+    // Locked items stay hidden until one of your open goals would unlock them
+    el.hidden = locked && !reach.has(`${slot}:${value}`);
+  });
+  syncAccessoryUI();
+  refreshSelectorUI();
+}
+
+// Highlight every worn accessory and explain the second slot
+function syncAccessoryUI() {
+  const none = outfit.accessory === 'none' && outfit.accessory2 === 'none';
+  document.querySelectorAll('[data-slot="accessory"]').forEach(el => {
+    const v = el.dataset.value;
+    const on = v === 'none' ? none : (v === outfit.accessory || v === outfit.accessory2);
+    el.classList.toggle('selected', on);
+    el.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+  const note = document.getElementById('accessory-note');
+  if (!note) return;
+  if (hasSecondAccessory()) {
+    note.textContent = 'You can wear two accessories. Tap one again to take it off.';
+  } else {
+    const goal = GOALS.find(g => g.reward.includes('feature:accessory2'));
+    note.textContent = goal ? `🔒 Wearing two accessories unlocks with the goal: ${goal.text}.` : '';
+  }
+}
+
+// Pick or remove an accessory. With the second slot unlocked you can wear two.
+function toggleAccessory(value) {
+  const hintEl = document.getElementById('hint-msg');
+  if (value === 'none') {
+    outfit.accessory = 'none'; outfit.accessory2 = 'none';
+  } else if (!hasSecondAccessory()) {
+    outfit.accessory = value; outfit.accessory2 = 'none';
+  } else if (value === outfit.accessory) {
+    outfit.accessory = outfit.accessory2; outfit.accessory2 = 'none';
+  } else if (value === outfit.accessory2) {
+    outfit.accessory2 = 'none';
+  } else if (outfit.accessory === 'none') {
+    outfit.accessory = value;
+  } else if (outfit.accessory2 === 'none') {
+    outfit.accessory2 = value;
+  } else {
+    outfit.accessory = outfit.accessory2; outfit.accessory2 = value;
+    hintEl.textContent = 'You can wear two accessories, so the oldest one came off.';
+  }
+  syncAccessoryUI();
+  drawCharacter('character');
+}
+
+function summarize(keys, max = 4) {
+  const labels = keys.map(labelFor);
+  return labels.length > max ? `${labels.slice(0, max).join(', ')} +${labels.length - max} more` : labels.join(', ');
+}
+
+function renderGoals() {
+  const list = document.getElementById('goals-list');
+  list.textContent = '';
+  const goals = activeGoals();
+  if (!goals.length) {
+    const li = document.createElement('li');
+    li.className = 'goal-done';
+    li.textContent = 'All goals complete! You unlocked everything. 🎉';
+    list.appendChild(li);
+    return;
+  }
+  goals.forEach(g => {
+    const li = document.createElement('li');
+    const text = document.createElement('span');
+    text.className = 'goal-text';
+    text.textContent = g.text;
+    li.appendChild(text);
+    if (g.reward.length) {
+      const reward = document.createElement('span');
+      reward.className = 'goal-reward';
+      reward.textContent = `Unlocks: ${summarize(g.reward)}`;
+      li.appendChild(reward);
+    }
+    list.appendChild(li);
+  });
+}
+
+function renderUnlockResult(completed, gained) {
+  const box = document.getElementById('unlock-result');
+  box.textContent = '';
+  if (!completed.length) return;
+  const head = document.createElement('div');
+  head.className = 'unlock-head';
+  head.textContent = completed.length > 1 ? '🎉 Goals complete!' : '🎉 Goal complete!';
+  box.appendChild(head);
+  completed.forEach(g => {
+    const line = document.createElement('div');
+    line.className = 'unlock-goal';
+    line.textContent = g.text;
+    box.appendChild(line);
+  });
+  if (gained.length) {
+    const un = document.createElement('div');
+    un.className = 'unlock-items';
+    un.textContent = `Unlocked: ${summarize(gained, 8)}`;
+    box.appendChild(un);
+  }
+  if (gained.some(k => k.startsWith('theme:')) && currentTheme) {
+    const nx = document.createElement('div');
+    nx.className = 'unlock-items';
+    nx.textContent = `Next round: ${currentTheme.emoji} ${currentTheme.name}. You can change it in the dressing room.`;
+    box.appendChild(nx);
+  }
+}
+
+// Called once the judges have scored the round
+function processGoals(scores, total) {
+  const ctx = {
+    outfit: { ...outfit }, scores, total,
+    themeId: currentTheme ? currentTheme.id : null,
+    themeRaw: themeEval.raw,
+  };
+  const completed = activeGoals().filter(g => g.test(ctx));
+  const gained = [];
+  completed.forEach(g => {
+    progress.done.add(g.id);
+    g.reward.forEach(k => {
+      if (!progress.unlocked.has(k)) { progress.unlocked.add(k); newlyUnlocked.add(k); gained.push(k); }
+    });
+  });
+  const newTheme = gained.filter(k => k.startsWith('theme:')).pop();
+  if (newTheme) setTheme(newTheme.slice(6));     // jump straight to the theme you just unlocked
+  saveProgress();
+  renderUnlockResult(completed, gained);
+  return completed;
+}
+
+function refreshProgressUI() {
+  refreshLocks();
+  renderGoals();
+}
+
+// Two-tap reset so there is no pop-up dialog
+function onResetClick() {
+  const btn = document.getElementById('btn-reset');
+  if (!resetArmed) {
+    resetArmed = true;
+    btn.textContent = 'Tap again to erase progress';
+    btn.classList.add('armed');
+    setTimeout(() => { resetArmed = false; btn.textContent = 'Reset progress'; btn.classList.remove('armed'); }, 3000);
+    return;
+  }
+  resetArmed = false;
+  btn.textContent = 'Reset progress';
+  btn.classList.remove('armed');
+  progress = { unlocked: new Set(STARTER_UNLOCKS), done: new Set() };
+  newlyUnlocked = new Set();
+  resetOutfitSelections();
+  setTheme('');
+  try { localStorage.removeItem(SAVE_KEY); } catch (e) { /* ignore */ }
+  refreshProgressUI();
+  document.getElementById('hint-msg').textContent = 'Progress reset. Back to the basics!';
 }
 
 // ─── OUTFIT STATE / UI ───────────────────────────────────────────────────────
 const REQUIRED = ['eyes', 'mouth', 'hair', 'top', 'bottom', 'shoes'];
 
 document.addEventListener('DOMContentLoaded', () => {
-  pickTheme();
-  selectOption('skin',        'tone1');
-  selectOption('haircolor',   'black');
-  selectOption('topcolor',    'red');
-  selectOption('bottomcolor', 'blue');
-  selectOption('shoecolor',   'black');
+  loadProgress();
+  buildSelector();
+  applyOutfit(savedOutfit || STARTER_PICKS);
+  initTheme();
+  document.getElementById('theme-select').addEventListener('change', e => setTheme(e.target.value));
+  refreshProgressUI();
 
   document.querySelectorAll('[data-slot]').forEach(el => {
     el.setAttribute('role', 'button');
     el.setAttribute('tabindex', '0');
-    el.addEventListener('click', () => selectOption(el.dataset.slot, el.dataset.value));
+    el.addEventListener('click', () => chooseOption(el));
     el.addEventListener('keydown', e => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        selectOption(el.dataset.slot, el.dataset.value);
+        chooseOption(el);
       }
     });
   });
+  document.getElementById('btn-reset').addEventListener('click', onResetClick);
 });
+
+// A click on any option: locked ones just explain how to unlock them
+function chooseOption(el) {
+  const { slot, value } = el.dataset;
+  const hintEl = document.getElementById('hint-msg');
+  if (!isUnlocked(slot, value)) {
+    hintEl.textContent = lockHint(slot, value);
+    return;
+  }
+  hintEl.textContent = '';
+  newlyUnlocked.delete(`${slot}:${value}`);
+  el.classList.remove('is-new');
+  if (slot === 'accessory') toggleAccessory(value);
+  else selectOption(slot, value);
+  refreshSelectorUI();
+  saveProgress();
+}
+
+// Put an outfit on the character. Anything missing or still locked falls back to the
+// starter pick, so every slot always has something selected.
+function applyOutfit(picks) {
+  document.querySelectorAll('.item-btn.selected, .swatch.selected').forEach(el => el.classList.remove('selected'));
+  OUTFIT_SLOTS.forEach(slot => {
+    const want = picks[slot];
+    let valid;
+    if (slot === 'accessory2') {
+      valid = want && want !== 'none' && hasSecondAccessory() && outfit.accessory !== 'none' &&
+        want !== outfit.accessory && isUnlocked('accessory', want);
+    } else {
+      valid = want && isUnlocked(slot, want) &&
+        document.querySelector(`[data-slot="${slot}"][data-value="${want}"]`);
+    }
+    selectOption(slot, valid ? want : STARTER_PICKS[slot]);
+  });
+}
+
+// Back to the basic starting outfit
+function resetOutfitSelections() {
+  applyOutfit(STARTER_PICKS);
+}
 
 function selectOption(slot, value) {
   outfit[slot] = value;
+  if (slot === 'accessory' || slot === 'accessory2') {
+    syncAccessoryUI();
+    drawCharacter('character');
+    return;
+  }
   document.querySelectorAll(`[data-slot="${slot}"]`).forEach(e => {
     e.classList.remove('selected');
     e.setAttribute('aria-pressed', 'false');
@@ -726,6 +1371,7 @@ function selectOption(slot, value) {
   const t = document.querySelector(`[data-slot="${slot}"][data-value="${value}"]`);
   if (t) { t.classList.add('selected'); t.setAttribute('aria-pressed', 'true'); }
   drawCharacter('character');
+  refreshThumbs();
 }
 
 // ─── RUNWAY ───────────────────────────────────────────────────────────────────
@@ -830,7 +1476,7 @@ const THEMES = [
     rules: [
       [+2, 'Sandals are perfect for the beach.',  o => o.shoes === 'sandals'],
       [+2, 'Shorts are totally beach ready.',     o => o.bottom === 'shorts'],
-      [+1, 'Sunglasses for the sunshine.',        o => o.accessory === 'sunglasses'],
+      [+1, 'Sunglasses for the sunshine.',        o => wears(o, 'sunglasses')],
       [+1, 'Bright colors fit the sunny mood.',   o => BRIGHT_COLORS.includes(o.topcolor)],
       [-2, 'Boots at the beach? Sandy socks ahead.', o => o.shoes === 'boots'],
       [-1, 'A jacket in the sun?',                o => o.top === 'jacket'],
@@ -842,7 +1488,7 @@ const THEMES = [
     rules: [
       [+2, 'A dress is made for a gala.',         o => o.bottom === 'dress'],
       [+2, 'Heels complete the royal look.',      o => o.shoes === 'heels'],
-      [+2, 'A crown for the gala? Of course.',    o => o.accessory === 'crown'],
+      [+2, 'A crown for the gala? Of course.',    o => wears(o, 'crown')],
       [+1, 'The jacket looks very formal.',       o => o.top === 'jacket'],
       [-2, 'Sneakers at a royal gala?',           o => o.shoes === 'sneakers'],
       [-1, 'A t-shirt is too casual for tonight.', o => o.top === 'tshirt'],
@@ -855,10 +1501,10 @@ const THEMES = [
       [+2, 'Sneakers are street style staples.',  o => o.shoes === 'sneakers'],
       [+2, 'Jeans fit the street look perfectly.', o => o.bottom === 'jeans'],
       [+1, 'A tee keeps it easygoing.',           o => o.top === 'tshirt'],
-      [+1, 'The hat adds attitude.',              o => o.accessory === 'hat'],
+      [+1, 'The hat adds attitude.',              o => wears(o, 'hat')],
       [+1, 'A neutral palette looks effortless.', o => NEUTRALS.includes(o.topcolor) || NEUTRALS.includes(o.bottomcolor)],
       [-2, 'Heels are too dressy for the street.', o => o.shoes === 'heels'],
-      [-1, 'A crown is a bit much for the sidewalk.', o => o.accessory === 'crown'],
+      [-1, 'A crown is a bit much for the sidewalk.', o => wears(o, 'crown')],
     ],
   },
   {
@@ -868,7 +1514,7 @@ const THEMES = [
       [+2, 'A blouse is lovely for a garden party.', o => o.top === 'blouse'],
       [+2, 'The dress is perfect for the garden.', o => o.bottom === 'dress'],
       [+1, 'A skirt twirls nicely on the lawn.',  o => o.bottom === 'skirt'],
-      [+2, 'The hair bow is so sweet.',           o => o.accessory === 'bow'],
+      [+2, 'The hair bow is so sweet.',           o => wears(o, 'bow')],
       [+1, 'Soft colors fit the garden.',         o => SOFT_COLORS.includes(o.topcolor)],
       [-1, 'The jacket is too heavy for spring.', o => o.top === 'jacket'],
       [-1, 'Boots will sink into the flower beds.', o => o.shoes === 'boots'],
@@ -880,11 +1526,144 @@ const THEMES = [
     rules: [
       [+2, 'Boots are smart for puddles.',        o => o.shoes === 'boots'],
       [+2, 'A jacket keeps the rain off.',        o => o.top === 'jacket'],
-      [+1, 'The hat helps with the drizzle.',     o => o.accessory === 'hat'],
+      [+1, 'The hat helps with the drizzle.',     o => wears(o, 'hat')],
       [+1, 'Jeans stay warm and sturdy.',         o => o.bottom === 'jeans'],
       [-2, 'Sandals in the rain? Soggy toes.',    o => o.shoes === 'sandals'],
       [-1, 'Shorts will get chilly and wet.',     o => o.bottom === 'shorts'],
       [-1, 'A crop top will not keep you dry.',   o => o.top === 'crop'],
+    ],
+  },
+  {
+    id: 'winter', name: 'Winter Wonderland', emoji: '⛄',
+    blurb: 'Snow is falling. Bundle up and look cozy!',
+    rules: [
+      [+2, 'A puffer coat is perfect for the snow.', o => o.top === 'puffer'],
+      [+2, 'Snow boots, smart and warm.',          o => o.shoes === 'snowboots'],
+      [+1, 'The beanie keeps your ears toasty.',   o => wears(o, 'beanie')],
+      [+1, 'Leggings are cozy under a coat.',      o => o.bottom === 'leggings'],
+      [+1, 'Icy colors look like fresh snow.',     o => ['white', 'blue', 'silver', 'purple'].includes(o.topcolor)],
+      [-2, 'Sandals in the snow? Brrr.',           o => o.shoes === 'sandals'],
+      [-1, 'Shorts in winter? Chilly!',            o => o.bottom === 'shorts'],
+      [-1, 'A crop top will not keep you warm.',   o => o.top === 'crop'],
+    ],
+  },
+  {
+    id: 'superhero', name: 'Superhero Night', emoji: '🦸',
+    blurb: 'Bold, brave and ready to save the day!',
+    rules: [
+      [+2, 'A cape! Ready to fly.',                o => wears(o, 'cape')],
+      [+2, 'The hero suit means business.',        o => o.top === 'bodysuit'],
+      [+1, 'A mask keeps your secret identity.',   o => wears(o, 'mask')],
+      [+1, 'Leggings let you move fast.',          o => o.bottom === 'leggings'],
+      [+1, 'Bold hero colors!',                    o => ['red', 'blue', 'yellow'].includes(o.topcolor)],
+      [-1, 'A bathrobe is not hero gear.',         o => o.top === 'robe'],
+      [-1, 'Bunny slippers will not catch villains.', o => o.shoes === 'slippers'],
+    ],
+  },
+  {
+    id: 'sports', name: 'Sports Day', emoji: '🏀',
+    blurb: 'Team spirit time. Dress to play!',
+    rules: [
+      [+2, 'The jersey shows team spirit.',        o => o.top === 'jersey'],
+      [+2, 'High-tops are made for the court.',    o => o.shoes === 'hightops'],
+      [+1, 'Sneakers are ready to run.',           o => o.shoes === 'sneakers'],
+      [+1, 'Track pants for warmups.',             o => o.bottom === 'track'],
+      [+1, 'Shorts for the big game.',             o => o.bottom === 'shorts'],
+      [+1, 'A headband catches the sweat.',        o => wears(o, 'headband')],
+      [-2, 'Heels on the court? Ouch.',            o => o.shoes === 'heels'],
+      [-1, 'A dress is hard to play in.',          o => o.bottom === 'dress'],
+    ],
+  },
+  {
+    id: 'fairy', name: 'Fairy Tale', emoji: '🧚',
+    blurb: 'Once upon a time... Sparkle like magic!',
+    rules: [
+      [+2, 'Fairy wings! Pure magic.',             o => wears(o, 'wings')],
+      [+2, 'The tulle skirt is so twirly.',        o => o.bottom === 'tulle'],
+      [+1, 'Star eyes sparkle like fairy dust.',   o => o.eyes === 'star'],
+      [+1, 'Petal pink hair, like a flower fairy.', o => o.haircolor === 'petal'],
+      [+1, 'A crown fit for a fairy princess.',    o => wears(o, 'crown')],
+      [-1, 'Track pants are not very magical.',    o => o.bottom === 'track'],
+      [-1, 'Sneakers do not fit the storybook.',   o => o.shoes === 'sneakers'],
+    ],
+  },
+  {
+    id: 'pirate', name: 'Pirate Adventure', emoji: '🏴‍☠️',
+    blurb: 'Ahoy! Set sail in swashbuckling style!',
+    rules: [
+      [+2, 'A proper pirate hat. Arr!',            o => wears(o, 'piratehat')],
+      [+2, 'Stripes, just like a sailor.',         o => o.top === 'striped'],
+      [+1, 'The eyepatch is very piratey.',        o => wears(o, 'eyepatch')],
+      [+1, 'A sash for your treasure map.',        o => wears(o, 'sash')],
+      [+1, 'Boots for walking the plank.',         o => o.shoes === 'boots'],
+      [-1, 'Heels on a ship deck? Slippery.',      o => o.shoes === 'heels'],
+      [-1, 'Pirates did not have sunglasses.',     o => wears(o, 'sunglasses')],
+    ],
+  },
+  {
+    id: 'space', name: 'Space Explorer', emoji: '🚀',
+    blurb: 'Blast off! Dress for zero gravity.',
+    rules: [
+      [+2, 'A space helmet! Ready for liftoff.',   o => wears(o, 'helmet')],
+      [+2, 'Space pants for a moonwalk.',          o => o.bottom === 'jumpsuit'],
+      [+1, 'The visor sees the stars.',            o => o.eyes === 'visor'],
+      [+1, 'Shiny space colors.',                  o => ['silver', 'neon', 'white'].includes(o.topcolor)],
+      [+1, 'Boots for walking on the moon.',       o => o.shoes === 'boots' || o.shoes === 'snowboots'],
+      [-1, 'Sandals in space? Cold toes.',         o => o.shoes === 'sandals'],
+      [-1, 'Flowers do not grow on the moon.',     o => wears(o, 'flowercrown')],
+    ],
+  },
+  {
+    id: 'glam', name: 'Glam Rock', emoji: '🎸',
+    blurb: 'Loud, proud and a little bit leather!',
+    rules: [
+      [+2, 'The leather jacket rocks.',            o => o.top === 'leather'],
+      [+2, 'Leather pants, very rock and roll.',   o => o.bottom === 'leatherpants'],
+      [+1, 'Platforms make you taller on stage.',  o => o.shoes === 'platforms'],
+      [+1, 'Spiky hair! Total rock star.',         o => o.hair === 'spiky'],
+      [+1, 'Black and neon look loud.',            o => ['black', 'neon'].includes(o.topcolor)],
+      [-1, 'A blouse is too sweet for a rock show.', o => o.top === 'blouse'],
+      [-1, 'The bow is a bit too cute.',           o => wears(o, 'bow')],
+    ],
+  },
+  {
+    id: 'blacktie', name: 'Black Tie Dinner', emoji: '🍽️',
+    blurb: 'A fancy dinner. Formal and elegant!',
+    rules: [
+      [+2, 'A blazer is perfect for dinner.',      o => o.top === 'blazer'],
+      [+2, 'Slacks look sharp and formal.',        o => o.bottom === 'slacks'],
+      [+1, 'Loafers are classic dinner shoes.',    o => o.shoes === 'loafers'],
+      [+1, 'A bow tie is very black tie.',         o => wears(o, 'bowtie')],
+      [+1, 'Pearls are so elegant.',               o => wears(o, 'pearls')],
+      [+1, 'Heels are dressy enough.',             o => o.shoes === 'heels'],
+      [-2, 'Sneakers at a fancy dinner?',          o => o.shoes === 'sneakers' || o.shoes === 'hightops'],
+      [-1, 'A jersey is too casual.',              o => o.top === 'jersey' || o.top === 'tshirt'],
+    ],
+  },
+  {
+    id: 'pajama', name: 'Pajama Party', emoji: '🧸',
+    blurb: 'Comfy, cozy and a little bit silly!',
+    rules: [
+      [+2, 'A robe! Cozy as can be.',              o => o.top === 'robe'],
+      [+2, 'PJ pants are perfect.',                o => o.bottom === 'pajamas'],
+      [+2, 'Bunny slippers! So cute.',             o => o.shoes === 'slippers'],
+      [+1, 'A sleep mask for beauty sleep.',       o => wears(o, 'sleepmask')],
+      [+1, 'Sleepy eyes fit the mood.',            o => o.eyes === 'sleepy'],
+      [-1, 'Heels at a sleepover?',                o => o.shoes === 'heels'],
+      [-1, 'A jacket is too stiff for bedtime.',   o => o.top === 'jacket' || o.top === 'blazer'],
+    ],
+  },
+  {
+    id: 'festival', name: 'Music Festival', emoji: '🎪',
+    blurb: 'Free spirit, good tunes and sunshine!',
+    rules: [
+      [+2, 'A flower crown is festival magic.',    o => wears(o, 'flowercrown')],
+      [+2, 'Tie-dye, so groovy.',                  o => o.top === 'tiedye'],
+      [+1, 'A flowy skirt for dancing.',           o => o.bottom === 'flowy'],
+      [+1, 'Cowboy boots for the fields.',         o => o.shoes === 'cowboy'],
+      [+1, 'Sunglasses for the main stage.',       o => wears(o, 'sunglasses')],
+      [-1, 'Slacks are too stiff for a festival.', o => o.bottom === 'slacks'],
+      [-1, 'A blazer in a field?',                 o => o.top === 'blazer'],
     ],
   },
 ];
@@ -892,16 +1671,53 @@ const THEMES = [
 let currentTheme = null;
 let themeEval    = { bonus: 0, notes: [], raw: 0 };
 
-function pickTheme() {
-  const pool = THEMES.filter(t => !currentTheme || t.id !== currentTheme.id);
-  currentTheme = pool[Math.floor(Math.random() * pool.length)];
-  document.getElementById('theme-emoji').textContent = currentTheme.emoji;
-  document.getElementById('theme-name').textContent  = currentTheme.name;
-  document.getElementById('theme-blurb').textContent = currentTheme.blurb;
-  document.getElementById('runway-theme').textContent = `Theme: ${currentTheme.name} ${currentTheme.emoji}`;
+let savedThemeId;   // theme chosen on the last visit (undefined = none saved)
+
+// Themes in the order you unlock them
+function themesInUnlockOrder() {
+  const order = [];
+  GOALS.forEach(goal => goal.reward.forEach(k => { if (k.startsWith('theme:')) order.push(k.slice(6)); }));
+  return order.map(id => THEMES.find(t => t.id === id)).filter(t => t && progress.unlocked.has(`theme:${t.id}`));
+}
+
+// Fill the theme dropdown: Free Style plus every unlocked theme
+function renderThemeSelect() {
+  const sel = document.getElementById('theme-select');
+  if (!sel) return;
+  const opts = [{ id: '', label: `${FREE_STYLE.emoji} ${FREE_STYLE.name}` }]
+    .concat(themesInUnlockOrder().map(t => ({
+      id: t.id, label: `${t.emoji} ${t.name}${newlyUnlocked.has(`theme:${t.id}`) ? ' (new!)' : ''}`,
+    })));
+  sel.innerHTML = '';
+  opts.forEach(o => { const op = document.createElement('option'); op.value = o.id; op.textContent = o.label; sel.appendChild(op); });
+  sel.value = currentTheme ? currentTheme.id : '';
+}
+
+// Set the round's theme ('' or null = Free Style) and update the banner
+function setTheme(id) {
+  const t = id ? THEMES.find(t => t.id === id) : null;
+  currentTheme = t && progress.unlocked.has(`theme:${t.id}`) ? t : null;
+  if (currentTheme) newlyUnlocked.delete(`theme:${currentTheme.id}`);
+  const shown = currentTheme || FREE_STYLE;
+  document.getElementById('theme-emoji').textContent = shown.emoji;
+  document.getElementById('theme-blurb').textContent = shown.blurb;
+  document.getElementById('runway-theme').textContent = `Theme: ${shown.name} ${shown.emoji}`;
+  renderThemeSelect();
+  saveProgress();
+}
+
+// On load: the saved choice if it's still unlocked, otherwise the newest theme
+function initTheme() {
+  const open = themesInUnlockOrder();
+  if (savedThemeId !== undefined && (savedThemeId === '' || open.some(t => t.id === savedThemeId))) setTheme(savedThemeId);
+  else setTheme(open.length ? open[open.length - 1].id : '');
 }
 
 function evaluateTheme() {
+  if (!currentTheme) {                       // Free Style: no theme bonus
+    themeEval = { bonus: 0, notes: [], raw: 0 };
+    return themeEval;
+  }
   const hits = currentTheme.rules
     .filter(([, , test]) => test(outfit))
     .map(([pts, text]) => [pts, text]);
@@ -916,6 +1732,79 @@ function themeRating(raw) {
   if (raw >= 3) return 'On theme! ✅';
   if (raw >= 1) return 'Kind of on theme 🤔';
   return 'Off theme 🙈';
+}
+
+// ─── JUDGES vs THEMES ────────────────────────────────────────────────────────
+// How much each judge cares about each theme. 1.5 = loves it (theme bonus or penalty
+// is amplified), 1 = neutral, 0.5 = lukewarm (halved). Each theme's weights add up to 3
+// so the round stays balanced overall.
+const THEME_WEIGHTS = {
+  beach:  { coco: 0.5, rose: 1,   zach: 1.5 },
+  street: { coco: 0.5, rose: 1,   zach: 1.5 },
+  garden: { coco: 1,   rose: 1.5, zach: 0.5 },
+  gala:   { coco: 1.5, rose: 1,   zach: 0.5 },
+  rainy:  { coco: 0.5, rose: 1.5, zach: 1   },
+  winter:    { coco: 1,   rose: 1.5, zach: 0.5 },
+  superhero: { coco: 1,   rose: 0.5, zach: 1.5 },
+  sports:    { coco: 0.5, rose: 1,   zach: 1.5 },
+  fairy:     { coco: 1,   rose: 1.5, zach: 0.5 },
+  pirate:    { coco: 1,   rose: 0.5, zach: 1.5 },
+  space:     { coco: 1.5, rose: 0.5, zach: 1   },
+  glam:      { coco: 1.5, rose: 0.5, zach: 1   },
+  blacktie:  { coco: 1.5, rose: 1,   zach: 0.5 },
+  pajama:    { coco: 0.5, rose: 1.5, zach: 1   },
+  festival:  { coco: 1.5, rose: 1,   zach: 0.5 },
+};
+
+function themeWeight(judge) {
+  return (currentTheme && THEME_WEIGHTS[currentTheme.id] && THEME_WEIGHTS[currentTheme.id][judge]) || 1;
+}
+
+// Loves it: round away from zero (1 -> 2, 2 -> 3). Lukewarm: round toward zero (1 -> 0, 2 -> 1).
+function scaleBonus(bonus, weight) {
+  const x = Math.abs(bonus) * weight;
+  const mag = weight > 1 ? Math.ceil(x) : weight < 1 ? Math.floor(x) : x;
+  return Math.sign(bonus) * mag;
+}
+
+// Reaction lines in each judge's voice. {theme} is replaced with the theme name.
+const THEME_REACTIONS = {
+  coco: {
+    nailed: '{theme}? You understood ze assignment perfectly!',
+    on:     'Ze {theme} theme, I see it. Not bad, darling.',
+    close:  'Ze {theme} theme, it is... somewhere in zere.',
+    off:    'Zis is supposed to be {theme}? I do not see it, chérie.',
+    loves:  'I live for {theme}, so I am watching closely!',
+    meh:    '{theme} is not my favorite, but I will judge fairly.',
+  },
+  rose: {
+    nailed: "It's just perfect for {theme}, dear!",
+    on:     'I can see the {theme} spirit in there, sweetheart!',
+    close:  'A little bit of {theme}, I think! Bless your heart.',
+    off:    "Hmm, I'm not sure where the {theme} went, dear.",
+    loves:  'I do adore {theme}, you know!',
+    meh:    "{theme} was never my cup of tea, but I'm trying!",
+  },
+  zach: {
+    nailed: 'That is {theme} to the core. Respect.',
+    on:     "Okay, I see the {theme} vibe. We're cooking.",
+    close:  'Lowkey {theme}? Like 40 percent.',
+    off:    "Where's the {theme}? Never heard of her.",
+    loves:  '{theme} is literally my favorite, so no pressure.',
+    meh:    "{theme} isn't really my thing, ngl.",
+  },
+};
+
+function themeReaction(judge) {
+  if (!currentTheme) return '';
+  const raw = themeEval.raw;
+  const tier = raw >= 5 ? 'nailed' : raw >= 3 ? 'on' : raw >= 1 ? 'close' : 'off';
+  const lines = THEME_REACTIONS[judge];
+  const w = themeWeight(judge);
+  let text = lines[tier];
+  if (w > 1) text += ' ' + lines.loves;
+  else if (w < 1) text += ' ' + lines.meh;
+  return text.replace(/\{theme\}/g, currentTheme.name);
 }
 
 // ─── OUTFIT SCORING ───────────────────────────────────────────────────────────
@@ -939,21 +1828,29 @@ function judgeOutfit(judge) {
     add(o.shoes === 'boots',        +1, 'Boots, zey have attitude. I like.');
     add(o.top === 'jacket',         +2, 'Ze jacket has structure, darling!');
     add(o.bottom === 'dress',       +2, 'Ze dress is très elegant.');
-    add(o.accessory === 'crown',    +2, 'A crown! You are not afraid of drama.');
-    add(o.accessory === 'hat',      +1, 'Ze hat, it is très chic.');
-    add(o.accessory === 'sunglasses', +1, 'Sunglasses indoors. Mysterious. I approve.');
+    add(wears(o, 'crown'),    +2, 'A crown! You are not afraid of drama.');
+    add(wears(o, 'hat'),      +1, 'Ze hat, it is très chic.');
+    add(wears(o, 'sunglasses'), +1, 'Sunglasses indoors. Mysterious. I approve.');
     add(o.accessory === 'none',     -1, 'No accessory? Ze outfit feels naked.');
+    add(o.accessory2 && o.accessory2 !== 'none', +1, 'Two accessories? Layers are ze secret, darling.');
     add(o.hair === 'bun',           +1, 'Ze bun is so Parisian.');
     add(o.mouth === 'pout',         +1, 'Ze pout! Zis is how we do it.');
     add(o.mouth === 'tongue',       -1, 'Ze tongue? Zis is not ze circus.');
     add(sameColor && !topNeutral,   -2, 'Ze top and bottom are ze same color. So boring.');
     add(!sameColor && !topNeutral && !botNeutral, +1, 'Bold color against bold color. Daring!');
+    add(o.top === 'blazer',         +2, 'Ze blazer! Tailoring is everything.');
+    add(o.top === 'leather',        +1, 'Leather. Dangerous. I love it.');
+    add(wears(o, 'cape'),           +1, 'A cape! Finally, some drama.');
+    add(wears(o, 'pearls'),         +1, 'Pearls, ze timeless classic.');
+    add(o.shoes === 'platforms',    +1, 'Platforms! Height is power, darling.');
+    add(o.top === 'jersey',         -1, 'A jersey? Zis is a runway, not a gym.');
+    add(o.shoes === 'slippers',     -1, 'Bunny slippers. I have no words.');
   }
 
   else if (judge === 'rose') {
-    add(o.accessory === 'bow',      +2, 'That hair bow is just darling!');
-    add(o.accessory === 'bag',      +1, 'What a sweet little bag!');
-    add(o.accessory === 'crown',    +1, 'A crown for my little princess!');
+    add(wears(o, 'bow'),      +2, 'That hair bow is just darling!');
+    add(wears(o, 'bag'),      +1, 'What a sweet little bag!');
+    add(wears(o, 'crown'),    +1, 'A crown for my little princess!');
     add(o.top === 'blouse',         +2, 'Such a pretty blouse, dear!');
     add(o.bottom === 'dress',       +2, 'A dress! You look like a storybook!');
     add(o.bottom === 'skirt',       +1, 'A twirly skirt, how lovely!');
@@ -965,7 +1862,13 @@ function judgeOutfit(judge) {
     add(SOFT_COLORS.includes(o.topcolor), +1, 'Such a soft, lovely color on top!');
     add(o.hair === 'curly',         +1, 'Curly hair, just like mine used to be!');
     add(o.eyes === 'star',          +1, 'Star eyes! They sparkle so much!');
-    add(o.accessory === 'sunglasses', -1, 'Sunglasses? I want to see those pretty eyes!');
+    add(wears(o, 'sunglasses'), -1, 'Sunglasses? I want to see those pretty eyes!');
+    add(wears(o, 'wings'),          +1, 'Little fairy wings! How precious!');
+    add(o.bottom === 'tulle',       +1, 'That tulle skirt is like a cupcake!');
+    add(o.top === 'puffer' || o.top === 'robe', +1, 'Nice and warm, just how I like it!');
+    add(o.shoes === 'slippers',     +1, 'Bunny slippers! I need a pair, dear.');
+    add(wears(o, 'flowercrown'),    +1, 'Flowers in your hair, how sweet!');
+    add(wears(o, 'eyepatch'),       -1, 'An eyepatch? Did you hurt yourself, dear?');
   }
 
   else if (judge === 'zach') {
@@ -977,16 +1880,22 @@ function judgeOutfit(judge) {
     add(o.top === 'blouse',         -1, 'Blouse is giving grandma. No offense.');
     add(o.bottom === 'jeans',       +2, 'Jeans. You cannot go wrong.');
     add(o.bottom === 'shorts',      +1, 'Shorts are a vibe.');
-    add(o.accessory === 'sunglasses', +2, 'The shades are immaculate.');
-    add(o.accessory === 'hat',      +1, 'That hat is a whole mood.');
-    add(o.accessory === 'crown',    +1, 'Crown? Main character energy.');
-    add(o.accessory === 'bow',      -1, 'The bow is not it, chief.');
+    add(wears(o, 'sunglasses'), +2, 'The shades are immaculate.');
+    add(wears(o, 'hat'),      +1, 'That hat is a whole mood.');
+    add(wears(o, 'crown'),    +1, 'Crown? Main character energy.');
+    add(wears(o, 'bow'),      -1, 'The bow is not it, chief.');
     add(o.mouth === 'tongue',       +1, 'Tongue out. Big mood.');
     add(o.eyes === 'cat',           +1, 'Cat eyes are cold, ngl.');
     add(topNeutral || botNeutral,   +1, 'Clean neutral palette. Love it.');
+    add(o.top === 'jersey',         +2, 'The jersey? Game day energy.');
+    add(o.shoes === 'hightops',     +1, 'High-tops are a whole flex.');
+    add(o.top === 'leather',        +1, 'Leather jacket is lowkey iconic.');
+    add(wears(o, 'beanie') || wears(o, 'headband'), +1, 'The headwear is a vibe.');
+    add(wears(o, 'pearls'),         -1, 'Pearls? Bit stiff, ngl.');
+    add(o.bottom === 'tulle',       -1, 'The tutu is a lot, chief.');
   }
 
-  let score = 3 + notes.reduce((sum, n) => sum + n[0], 0) + themeEval.bonus + (Math.floor(Math.random() * 3) - 1);
+  let score = 3 + notes.reduce((sum, n) => sum + n[0], 0) + scaleBonus(themeEval.bonus, themeWeight(judge)) + (Math.floor(Math.random() * 3) - 1);
   score = Math.max(0, Math.min(10, score));
 
   // Biggest swing (good or bad) becomes the callout
@@ -1011,6 +1920,13 @@ function revealJudge(judge, scores) {
     note.textContent = callout;
     quoteEl.appendChild(note);
   }
+  const reaction = themeReaction(judge);
+  if (reaction) {
+    const tn = document.createElement('div');
+    tn.className = 'judge-theme';
+    tn.textContent = reaction;
+    quoteEl.appendChild(tn);
+  }
   document.getElementById(`score-${judge}`).textContent = `${score}/10`;
   document.getElementById(`judge-${judge}`).classList.add('revealed');
 }
@@ -1020,10 +1936,15 @@ function showTotal(scores) {
   const entry = TOTAL_MSGS.find(t => total >= t.min && total <= t.max) || TOTAL_MSGS.at(-1);
   document.getElementById('total-score').textContent = `${total}/30`;
   document.getElementById('total-msg').textContent   = entry.msg;
-  const best = themeEval.notes.slice().sort((a, b) => Math.abs(b[0]) - Math.abs(a[0])).slice(0, 2).map(n => n[1]);
-  const detail = best.length ? ' ' + best.join(' ') : ' Nothing matched the theme this time.';
-  document.getElementById('theme-result').textContent =
-    `${currentTheme.emoji} ${currentTheme.name}: ${themeRating(themeEval.raw)}${detail}`;
+  if (currentTheme) {
+    const best = themeEval.notes.slice().sort((a, b) => Math.abs(b[0]) - Math.abs(a[0])).slice(0, 2).map(n => n[1]);
+    const detail = best.length ? ' ' + best.join(' ') : ' Nothing matched the theme this time.';
+    document.getElementById('theme-result').textContent =
+      `${currentTheme.emoji} ${currentTheme.name}: ${themeRating(themeEval.raw)}${detail}`;
+  } else {
+    document.getElementById('theme-result').textContent = `${FREE_STYLE.emoji} Free Style: no theme this round.`;
+  }
+  processGoals(scores, total);
   document.getElementById('total-wrap').style.display = 'block';
 }
 
@@ -1037,29 +1958,11 @@ function playAgain() {
   char.classList.remove('walking');
   void wrap.offsetWidth;
 
-  // Reset outfit to defaults (keep color pickers, clear choices)
-  outfit.eyes   = null;
-  outfit.mouth  = null;
-  outfit.hair   = null;
-  outfit.top    = null;
-  outfit.bottom = null;
-  outfit.shoes  = null;
-  outfit.accessory = 'none';
-
-  // Clear all selected highlights
-  document.querySelectorAll('.item-btn.selected, .swatch.selected').forEach(el => {
-    el.classList.remove('selected');
-  });
-
-  // Re-apply default color swatch selections
-  selectOption('skin',        outfit.skin);
-  selectOption('haircolor',   outfit.haircolor);
-  selectOption('topcolor',    outfit.topcolor);
-  selectOption('bottomcolor', outfit.bottomcolor);
-  selectOption('shoecolor',   outfit.shoecolor);
-
+  // Keep the current outfit so the player can tweak it with their new unlocks
   document.getElementById('hint-msg').textContent = '';
-  pickTheme();
+  document.getElementById('unlock-result').textContent = '';
+  renderThemeSelect();
+  refreshProgressUI();
   showScreen('screen-dress');
 }
 
@@ -1068,4 +1971,145 @@ function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0, 0);
+}
+
+
+// ─── WARDROBE SELECTOR (tabs, thumbnail tiles, theme groups) ─────────────────
+// Part of the 48x64 canvas to show for each slot's tile: [x, y, w, h]
+const THUMB_CROP = {
+  eyes: [10, 5, 28, 16], mouth: [12, 14, 24, 12], hair: [4, 0, 40, 32],
+  top: [6, 26, 36, 18], bottom: [6, 40, 36, 22], shoes: [6, 52, 36, 12],
+  accessory: [0, 0, 48, 64],
+};
+// Accessories worn on the body need a bigger view than the head crop
+const ACCESSORY_CROP = {
+  bag: [0, 0, 48, 64], cape: [0, 14, 48, 50], wings: [0, 16, 48, 34], sash: [6, 22, 36, 24],
+  bowtie: [12, 16, 24, 18], pearls: [10, 18, 28, 16],
+};
+let _thumbSrc = null;
+let _thumbQueued = false;
+let activeTab = null;
+
+// Draw one tile's picture: the current outfit with this tile's item swapped in
+function renderThumb(el) {
+  const { slot, value } = el.dataset;
+  const crop = slot === 'accessory' ? (ACCESSORY_CROP[value] || [6, 0, 36, 30]) : THUMB_CROP[slot];
+  const cv = el.querySelector('canvas');
+  if (!crop || !cv) return;
+  if (!_thumbSrc) { _thumbSrc = document.createElement('canvas'); _thumbSrc.width = CW; _thumbSrc.height = CH; }
+  const saved = { ...outfit };
+  outfit[slot] = value;
+  if (slot === 'accessory') outfit.accessory2 = 'none';
+  const sctx = _thumbSrc.getContext('2d');
+  paintCharacter(sctx);
+  Object.assign(outfit, saved);
+  cv.width = crop[2]; cv.height = crop[3];
+  const ctx = cv.getContext('2d');
+  ctx.clearRect(0, 0, crop[2], crop[3]);
+  ctx.drawImage(_thumbSrc, crop[0], crop[1], crop[2], crop[3], 0, 0, crop[2], crop[3]);
+}
+
+function refreshThumbs() {
+  if (_thumbQueued) return;
+  _thumbQueued = true;
+  const run = () => {
+    _thumbQueued = false;
+    document.querySelectorAll('.item-btn[data-slot]').forEach(renderThumb);
+  };
+  if (typeof requestAnimationFrame === 'function') requestAnimationFrame(run); else run();
+}
+
+// Which theme "era" each item belongs to: whatever theme was most recently unlocked
+// by the time the goal rewarding that item comes up. Everything else is Basics.
+function itemGroupMap() {
+  const map = {}; let current = 'basics';
+  GOALS.forEach(g => {
+    const th = g.reward.find(k => k.startsWith('theme:'));
+    if (th) current = th.slice(6);
+    g.reward.forEach(k => { if (!k.startsWith('theme:') && !k.startsWith('feature:')) map[k] = current; });
+  });
+  return map;
+}
+function groupLabel(id) {
+  if (id === 'basics') return 'Basics';
+  const t = THEMES.find(t => t.id === id);
+  return t ? `${t.emoji} ${t.name}` : id;
+}
+
+function buildSelector() {
+  const groupOf = itemGroupMap();
+  const order = ['basics'];
+  GOALS.forEach(g => g.reward.forEach(k => {
+    if (k.startsWith('theme:') && !order.includes(k.slice(6))) order.push(k.slice(6));
+  }));
+
+  // Tiles: thumbnail on top, name underneath
+  document.querySelectorAll('.item-btn[data-slot]').forEach(el => {
+    const text = el.textContent.trim();
+    const m = text.match(/^(\S+)\s+(.*)$/);
+    const emoji = m ? m[1] : '', name = m ? m[2] : text;
+    el.dataset.label = name;
+    el.dataset.group = groupOf[`${el.dataset.slot}:${el.dataset.value}`] || 'basics';
+    const noPic = !THUMB_CROP[el.dataset.slot] || (el.dataset.slot === 'accessory' && el.dataset.value === 'none');
+    el.innerHTML = `<span class="thumb">${noPic ? emoji : '<canvas width="24" height="24"></canvas>'}</span><span class="lbl">${name}</span>`;
+  });
+
+  // Order each tile grid by group and add group headings
+  document.querySelectorAll('.item-row').forEach(row => {
+    const tiles = [...row.querySelectorAll('.item-btn')];
+    if (!tiles.length) return;
+    tiles.sort((a, b) => order.indexOf(a.dataset.group) - order.indexOf(b.dataset.group));
+    row.innerHTML = '';
+    tiles.forEach(t => {
+      if (t.dataset.group !== 'basics') {
+        const tag = document.createElement('span');
+        tag.className = 'theme-tag'; tag.textContent = groupLabel(t.dataset.group).split(' ')[0];
+        t.title = groupLabel(t.dataset.group);
+        t.appendChild(tag);
+      }
+      row.appendChild(t);
+    });
+    const note = document.createElement('p');
+    note.className = 'more-note'; note.hidden = true;
+    row.after(note);
+  });
+
+  // Tabs, one per option group
+  const tabs = document.getElementById('tabs');
+  document.querySelectorAll('.option-group').forEach((grp, i) => {
+    const name = grp.querySelector('h3').textContent.trim();
+    grp.dataset.tab = name;
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'tab'; b.setAttribute('role', 'tab'); b.dataset.tab = name;
+    b.innerHTML = `<span>${name}</span><span class="tab-new" hidden>✨</span>`;
+    b.addEventListener('click', () => showTab(name));
+    tabs.appendChild(b);
+    if (i === 0) activeTab = name;
+  });
+  showTab(activeTab);
+  refreshThumbs();
+}
+
+function showTab(name) {
+  activeTab = name;
+  document.querySelectorAll('.option-group').forEach(g => g.classList.toggle('active-tab', g.dataset.tab === name));
+  document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === name ? 'true' : 'false'));
+}
+
+// Count what's still hidden
+// and put a sparkle on tabs that hold new unlocks
+function refreshSelectorUI() {
+  document.querySelectorAll('.item-row').forEach(row => {
+    const hiddenCount = [...row.querySelectorAll('.item-btn')].filter(t => t.hidden).length;
+    const note = row.nextElementSibling;
+    if (note && note.classList.contains('more-note')) {
+      note.hidden = hiddenCount === 0;
+      note.textContent = hiddenCount ? `🔒 ${hiddenCount} more to discover. Finish goals to reveal them.` : '';
+    }
+  });
+  document.querySelectorAll('.tab').forEach(b => {
+    const grp = document.querySelector(`.option-group[data-tab="${b.dataset.tab}"]`);
+    const fresh = grp && grp.querySelector('.is-new:not([hidden])');
+    b.querySelector('.tab-new').hidden = !fresh;
+  });
 }
